@@ -1,3 +1,5 @@
+"""utils queue"""
+
 from typing import Union
 
 
@@ -19,19 +21,34 @@ class SplitQueue:
 
     @property
     def empty(self) -> bool:
+        """Whether this queue is empty"""
         return len(self._data) == 0
 
     @property
     def data(self) -> Union[str, bytes]:
+        """Return a copy of this queue's data"""
         return self._data
 
     def clear(self) -> None:
+        """Clear this queue"""
         self._data = ""
 
     def append(self, data: Union[str, bytes]) -> None:
+        """append a data to the right of this queue"""
         self._data += data
 
     def pop(self, delimiter: Union[str, bytes]) -> Union[str, bytes]:
+        """Pop the first element before the delimiter.
+
+        Args:
+            delimiter (Union[str, bytes]): delimiter to split the string.
+
+        Raises:
+            ValueError: pop if the queue is already empty.
+
+        Returns:
+            Union[str, bytes]: the first element before the delimiter.
+        """
         if self.empty:
             raise ValueError("SplitQueue is empty")
         first, *rest = self._data.split(delimiter, 1)

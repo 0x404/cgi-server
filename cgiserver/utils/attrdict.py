@@ -1,3 +1,4 @@
+"""A wraped dict class"""
 from typing import Any
 
 
@@ -16,14 +17,11 @@ class AttrDict(dict):
     {'a': 3, 'b': 2, 'c': 3}
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def __getattr__(self, __name: str) -> Any:
         try:
             return super().__getitem__(__name)
-        except:
-            raise KeyError(f"{__name} not in AttrDict")
+        except Exception as exception:
+            raise KeyError(f"{__name} not in AttrDict") from exception
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         return super().__setitem__(__name, __value)

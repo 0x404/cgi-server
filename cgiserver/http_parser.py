@@ -1,3 +1,4 @@
+"""HTTP Parser"""
 from typing import Union
 from utils import AttrDict, SplitQueue
 
@@ -20,6 +21,7 @@ class HttpRequestParser:
 
     def __reload(self) -> None:
         """Reload to parse multiple http requests with one object"""
+        # pylint: disable = unnecessary-dunder-call
         self.__init__()
 
     def parse(self, data: Union[str, bytes]) -> AttrDict:
@@ -80,7 +82,8 @@ class HttpRequestParser:
 
 
 if __name__ == "__main__":
-    http = (
+    # pylint: disable = line-too-long
+    HTTP_REQUEST = (
         b"GET / HTTP/1.1\r\n"
         b"Host: 127.0.0.1:8888\r\n"
         b"Connection: keep-alive\r\n"
@@ -99,7 +102,7 @@ if __name__ == "__main__":
         b"Accept-Language: en-GB,en;q=0.9,zh;q=0.8,en-US;q=0.7,zh-CN;q=0.6\r\n\r\n"
     )
     p = HttpRequestParser()
-    config = p.parse(http)
+    config = p.parse(HTTP_REQUEST)
     print(config)
-    config = p.parse(http)
+    config = p.parse(HTTP_REQUEST)
     print(config)

@@ -1,3 +1,4 @@
+"""cgi server utils"""
 from .attrdict import AttrDict
 from .queue import SplitQueue
 
