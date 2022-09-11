@@ -28,6 +28,7 @@ class HTTPServer:
         # while being able to catch KeyboardInterrupt to stop server
         # see details: https://stackoverflow.com/questions/34871191/cant-close-socket-on-keyboardinterrupt
         server_socket.settimeout(1)
+        print(f"server running on http://{self.host}:{self.port}")
         while True:
             try:
                 client_socket, client_address = server_socket.accept()
@@ -35,7 +36,6 @@ class HTTPServer:
                 continue
             except KeyboardInterrupt:
                 break
-            print(f"new comming from {client_address}")
             handle_thread = threading.Thread(
                 target=Session(client_socket, client_address)
             )
