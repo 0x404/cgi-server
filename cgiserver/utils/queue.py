@@ -16,7 +16,7 @@ class SplitQueue:
     b'H2: k2: v2;'
     """
 
-    def __init__(self, data: Union[str, bytes]) -> None:
+    def __init__(self, data: Union[str, bytes] = "") -> None:
         self._data = data
 
     @property
