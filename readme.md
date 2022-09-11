@@ -16,9 +16,19 @@
 ## 目前功能
 
 * `HTTP`解析
-* `HTTP`服务器（进行中，分支`zqh/server`）
+* `HTTP`服务器
+* 静态路由和CGI路由（进行中， 分支/zqh/router）
 
+## 使用方法
 
+启动服务器
+
+```shell
+cd cgiserver
+python http_server.py
+```
+
+进入http://127.0.0.1:5500，你应该可以看到一个404 No Found页面
 
 ## 参与开发
 
