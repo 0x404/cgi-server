@@ -28,7 +28,7 @@ cd cgiserver
 python http_server.py
 ```
 
-进入http://127.0.0.1:5500，你应该可以看到一个404 No Found页面
+进入127.0.0.1:5500，你应该可以看到一个404 No Found页面
 
 ## 参与开发
 
