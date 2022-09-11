@@ -1,7 +1,9 @@
 """HTTP Parser"""
 from typing import Union
 from utils import AttrDict, SplitQueue
+
 # pylint: disable = no-member
+
 
 class HttpRequestParser:
     """Parse the HTTP request into a AttrDict conifg
