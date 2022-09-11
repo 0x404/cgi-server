@@ -5,7 +5,8 @@ based on the request, and a thread will be opened to run the session.
 """
 import socket
 from typing import Any
-from http_parser import HttpRequestParser
+from utils import html_file_loader
+from http_parser import HttpRequestParser, HttpResponseParser
 
 
 class Session:
@@ -23,8 +24,14 @@ class Session:
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
 
-        # just for test
-        print(config)
+        # TODO: supprot CGI router here
+        # pylint: disable=broad-except
+        try:
+            response_html = html_file_loader("static/404.html")
+        except Exception:
+            response_html = b"<p> 404 NO FOUND </p>"
+        response = HttpResponseParser.make_response(200, config.headers, response_html)
+        self.client_socket.send(response)
         self.client_socket.close()
 
     def run(self, *args: Any, **kwds: Any) -> Any:
