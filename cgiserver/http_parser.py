@@ -1,7 +1,9 @@
 """HTTP Parser"""
-from typing import Union
-from utils import AttrDict, SplitQueue
+from typing import Optional, Union
+from utils import AttrDict, SplitQueue, HTTPStatus
+
 # pylint: disable = no-member
+
 
 class HttpRequestParser:
     """Parse the HTTP request into a AttrDict conifg
@@ -67,24 +69,88 @@ class HttpRequestParser:
             headerline = self.queue.pop("\r\n")
             if headerline:
                 name, value = headerline.strip().split(": ", 1)
-                self.headers[name.upper()] = value
+                self.headers[name] = value
             else:
                 self.__parse_headers_done = True
                 break
 
-        if "CONTENT-LENGTH" in self.headers:
-            self.headers["CONTENT-LENGTH"] = int(self.headers["CONTENT-LENGTH"])
+        if "Content-Length" in self.headers:
+            self.headers["Content-Length"] = int(self.headers["Content-Length"])
         else:
-            self.headers["CONTENT-LENGTH"] = 0
+            self.headers["Content-Length"] = 0
 
     def _parse_content(self) -> None:
         """Parse the content of the http request"""
-        content_length = self.headers["CONTENT-LENGTH"]
+        content_length = self.headers["Content-Length"]
         if not self.queue.empty:
             self.config.content += self.queue.data
             self.queue.clear()
         if len(self.config.content) == content_length:
             self.__parse_content_done = True
+
+
+class HttpResponseParser:
+    """Parse Http Response"""
+
+    @staticmethod
+    def make_startline(status_code: int) -> bytes:
+        """Make a HTTP startline.
+
+        Args:
+            status_code (int): status code.
+
+        Returns:
+            bytes: e.g. b"HTTP/1.1 200 OK\r\n"
+        """
+        # pylint: disable = no-value-for-parameter
+        status_phrase = HTTPStatus(status_code).phrase.encode()
+        status_code = str(status_code).encode()
+        return f"HTTP/1.1 {status_code} {status_phrase}\r\n".encode()
+
+    @staticmethod
+    def make_headers(headers: AttrDict) -> bytes:
+        """Make a Http headers line.
+
+        Args:
+            headers (AttrDict): headers.
+
+        Returns:
+            bytes: e.g. b"Host: 127.0.0.1:8888\r\nConnection: keep-alive\r\n".
+        """
+        headerstr = "".join([f"{key}: {value}\r\n" for key, value in headers.items()])
+        return headerstr.encode()
+
+    @staticmethod
+    def make_response(
+        status_code: int,
+        headers: Optional[AttrDict] = None,
+        body: Union[str, bytes] = "",
+    ):
+        """make a HTTP response in bytes.
+
+        Args:
+            status_code (int): status code. e.g. 200, 404.
+            headers (Optional[AttrDict], optional): html headers. Defaults to None.
+            body (Union[str, bytes], optional): html body content. Defaults to "".
+
+        Return:
+            bytes: bytes ready to be sent.
+        """
+        headers = AttrDict() if headers is None else headers
+        body = body.encode() if isinstance(body, str) else body
+
+        if body:
+            headers["Content-Length"] = len(body)
+        else:
+            headers.pop("Content-Length")
+
+        content = [
+            HttpResponseParser.make_startline(status_code),
+            HttpResponseParser.make_headers(headers),
+            b"\r\n",
+            body,
+        ]
+        return b"".join(content)
 
 
 if __name__ == "__main__":
