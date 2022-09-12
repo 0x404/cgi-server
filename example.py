@@ -69,6 +69,20 @@ def index_page(**kwargs):
     return response
 
 
+@route("/webroot/log")
+def log_page(**kwargs):
+    """This example is to tell you not to be limited to just a string,
+    we can also open an html file and read it back,
+    to achieve the effect of returning a html page.
+    """
+    try:
+        with open("logs/server_log.html", mode="r", encoding="utf-8") as logfile:
+            response = logfile.read()
+    except FileNotFoundError:
+        response = "<p> log file no found </p>"
+    return response.encode()
+
+
 if __name__ == "__main__":
     # When you have finished the definition of your website above
     # use the `run`` function to run the server directly
