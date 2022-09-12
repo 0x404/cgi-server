@@ -3,22 +3,20 @@
 Whenever a request comes from the server, a session will be created
 based on the request, and a thread will be opened to run the session.
 """
-# pylint: disable = unused-import
-from ensurepip import version
-from inspect import stack
 import socket
-import logging
 from typing import Any
-from cgiserver.utils import html_file_loader
+from cgiserver.utils import html_file_loader, AttrDict
 from cgiserver.router import ROUTER
+from cgiserver.logging import get_logger
 from cgiserver.http_parser import HttpRequestParser, HttpResponseParser
 
 # pylint: disable = broad-except
-
 try:
     NOFOUND_HTML = html_file_loader("cgiserver/static/404.html")
 except Exception:
     NOFOUND_HTML = b"<p> 404 NO FOUND </p>"
+
+logger = get_logger()
 
 
 class Session:
@@ -29,7 +27,6 @@ class Session:
     ) -> None:
         self.client_socket = client_socket
         self.client_address = client_address
-        self.logger = logging.getLogger()
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         parser = HttpRequestParser()
@@ -58,9 +55,17 @@ class Session:
         # pylint: disable = unnecessary-dunder-call
         return self.__call__(args, kwds)
 
-    def _log_current_request(self, config, client_address, status_code) -> None:
-        client_ip = client_address[0]
-        client_port = client_address[1]
+    def _log_current_request(
+        self, config: AttrDict, client_address: tuple[str, int], status_code: int
+    ) -> None:
+        """log current request.
+
+        Args:
+            config (AttrDict): HTTP request config.
+            client_address (tuple[str, int]): client address.
+            status_code (int): HTPP status code.
+        """
+        client_ip, client_port = client_address
         method = config.method
         url = config.url
         http_version = config["http-version"]
@@ -68,4 +73,4 @@ class Session:
         content_length = config.headers["Content-Length"]
 
         text = f'[{client_ip}:{client_port}] "{method} {url} {http_version}" {status_code} {content_length} "{user_agent}"'
-        self.logger.info(text)
+        logger.info(text)
