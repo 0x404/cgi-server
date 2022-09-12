@@ -2,7 +2,7 @@
 import threading
 import socket
 from typing import Any
-from http_session import Session
+from cgiserver.http_session import Session
 
 
 class HTTPServer:
@@ -43,8 +43,3 @@ class HTTPServer:
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         self.serve_forever()
-
-
-if __name__ == "__main__":
-    server = HTTPServer("127.0.0.1", 5500)
-    server.serve_forever()
