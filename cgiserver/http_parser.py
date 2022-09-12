@@ -46,7 +46,7 @@ class HttpRequestParser:
 
         # TODO: Supports error and exception handling
         while not self.completed and not self.queue.empty:
-            if not self.__parse_startline_done:
+            if not self.__parse_startline_done: 
                 self._parse_startline()
             if not self.__parse_headers_done and self.__parse_startline_done:
                 self._parse_headers()
