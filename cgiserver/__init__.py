@@ -2,6 +2,7 @@
 from .router import route
 from .http_server import HTTPServer
 
+
 def run(host: str = "127.0.0.1", port: int = 5500):
     """wraped HTTPServer run.
 
@@ -11,5 +12,6 @@ def run(host: str = "127.0.0.1", port: int = 5500):
     """
     server = HTTPServer(host, port)
     server.serve_forever()
+
 
 __all__ = ["route", "run"]
