@@ -1,34 +1,33 @@
 # 多线程CGI服务器
 
+## 使用方法
 
+参考`Flask`框架的设计，通过装饰器让用户自己组织网站该显示的内容
 
-## 设计思路
+```python
+from cgiserver import route
 
-利用python的`socket`编程简单实现一个服务器，对`socket`发送过来的数据做`HTTP`协议的格式解析，获得一个`Config`，其中包含`HTTP`请求中的所有内容，如访问路径，访问方法等。
+@route("/webroot", method="GET")
+def web_page(**kwargs):
+    """Bind function `web_page` to URL '/webroot'.
+    Whenever a user visit `/webroot` using `GET` mehtod,
+    he will get a `this is web root page` HTML page.
+    """
+    response = "<p> this is web root page </p>"
+    return response
 
-* 对于静态请求很简单，根据访问路径返回一个`HTML`字符串即可
-* 对于动态请求也不难，对于`python`来说，一个`python`脚本就是一个`cgi`程序，所以把`Config`的路径绑定到对应的脚本路径上，运行脚本即可
-  * 更具体一些，我们可以认为一个`python`的`Callable object`就是一个`cgi`程序，从而我们可以直接绑定到一个类或者一个函数上
-* 关于多线程：我现在简单地开一个主线程用来监听端口，一旦有一个新的`socket`连接过来，开一个线程去跑一个`session`处理这个`socket`（由于`HTTP`协议一次请求一次回复，所以相对好做）
+```
 
+具体请见[example.py](./example.py)，我写了一个非常详细的使用说明。
 
+后续将会打包的`pypi`，大家可以直接通过`pip`命令安装，非常方便。
 
 ## 目前功能
 
 * `HTTP`解析
 * `HTTP`服务器
-* 静态路由和CGI路由（进行中， 分支/zqh/router）
-
-## 使用方法
-
-启动服务器
-
-```shell
-cd cgiserver
-python http_server.py
-```
-
-进入127.0.0.1:5500，你应该可以看到一个404 No Found页面
+* 静态路由和`CGI`路由
+* 路由装饰器
 
 ## 参与开发
 
@@ -41,7 +40,7 @@ python http_server.py
      
       ``` shell
      pip3 install -r requirements.txt
-      ```
+     ```
      
      
    
@@ -50,3 +49,13 @@ python http_server.py
    - 在完成自己的功能时请自己开一个分支，在自己的分支上完成代码的提交，待功能完成后提出合并请求
    - 在提出合并请求前请确保代码通过了风格检查和静态代码分析，以及`pytest`测试（后续将添加`github workflow`来自动检查）
    - 合并请求需要至少一个approval才可以合入master（大家都有权限）
+
+
+## 设计思路
+
+利用python的`socket`编程简单实现一个服务器，对`socket`发送过来的数据做`HTTP`协议的格式解析，获得一个`Config`，其中包含`HTTP`请求中的所有内容，如访问路径，访问方法等。
+
+* 对于静态请求很简单，根据访问路径返回一个`HTML`字符串即可
+* 对于动态请求也不难，对于`python`来说，一个`python`脚本就是一个`cgi`程序，所以把`Config`的路径绑定到对应的脚本路径上，运行脚本即可
+  * 更具体一些，我们可以认为一个`python`的`Callable object`就是一个`cgi`程序，从而我们可以直接绑定到一个类或者一个函数上
+* 关于多线程：我现在简单地开一个主线程用来监听端口，一旦有一个新的`socket`连接过来，开一个线程去跑一个`session`处理这个`socket`（由于`HTTP`协议一次请求一次回复，所以相对好做

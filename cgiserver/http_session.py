@@ -8,8 +8,16 @@ from inspect import stack
 import socket
 import logging
 from typing import Any
-from utils import html_file_loader
-from http_parser import HttpRequestParser, HttpResponseParser
+from cgiserver.utils import html_file_loader
+from cgiserver.router import ROUTER
+from cgiserver.http_parser import HttpRequestParser, HttpResponseParser
+
+# pylint: disable = broad-except
+
+try:
+    NOFOUND_HTML = html_file_loader("cgiserver/static/404.html")
+except Exception:
+    NOFOUND_HTML = b"<p> 404 NO FOUND </p>"
 
 
 class Session:
@@ -28,13 +36,16 @@ class Session:
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
 
-        # TODO: supprot CGI router here
-        # pylint: disable=broad-except
         try:
-            response_html = html_file_loader("static/404.html")
+            response_html = ROUTER.match(config.url, config.method)()
+            if not isinstance(response_html, (str, bytes)):
+                response_html = (
+                    f"<P> currently does not support {str(type(response_html))[1:-1]} "
+                    f"as the return value of the decorated function</P>"
+                )
         except Exception:
-            response_html = b"<p> 404 NO FOUND </p>"
-        
+            response_html = NOFOUND_HTML
+
         response = HttpResponseParser.make_response(200, config.headers, response_html)
         self._log_current_request(config, self.client_address, 200)
         

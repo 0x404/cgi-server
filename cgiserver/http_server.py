@@ -3,7 +3,7 @@ import threading
 import socket
 import logging
 from typing import Any
-from http_session import Session
+from cgiserver.http_session import Session
 
 
 class HTTPServer:

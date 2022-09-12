@@ -1,6 +1,6 @@
 """HTTP Parser"""
 from typing import Optional, Union
-from utils import AttrDict, SplitQueue, HTTPStatus
+from cgiserver.utils import AttrDict, SplitQueue, HTTPStatus
 
 # pylint: disable = no-member
 
