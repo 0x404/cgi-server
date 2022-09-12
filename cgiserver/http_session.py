@@ -3,6 +3,7 @@
 Whenever a request comes from the server, a session will be created
 based on the request, and a thread will be opened to run the session.
 """
+# pylint: disable = unused-import
 from ensurepip import version
 from inspect import stack
 import socket
@@ -48,7 +49,7 @@ class Session:
 
         response = HttpResponseParser.make_response(200, config.headers, response_html)
         self._log_current_request(config, self.client_address, 200)
-        
+
         self.client_socket.send(response)
         self.client_socket.close()
 
@@ -56,8 +57,8 @@ class Session:
         """Run the session, handle an HTTP connection once"""
         # pylint: disable = unnecessary-dunder-call
         return self.__call__(args, kwds)
-    
-    def _log_current_request(self, config, client_address, status_code)->None:
+
+    def _log_current_request(self, config, client_address, status_code) -> None:
         client_ip = client_address[0]
         client_port = client_address[1]
         method = config.method
@@ -66,6 +67,5 @@ class Session:
         user_agent = config.headers["User-Agent"]
         content_length = config.headers["Content-Length"]
 
-        text = f"[{client_ip}:{client_port}] \"{method} {url} {http_version}\" {status_code} {content_length} \"{user_agent}\""
+        text = f'[{client_ip}:{client_port}] "{method} {url} {http_version}" {status_code} {content_length} "{user_agent}"'
         self.logger.info(text)
-    
