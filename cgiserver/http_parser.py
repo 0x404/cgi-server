@@ -161,7 +161,7 @@ class HttpResponseParser:
             headers["Content-Length"] = len(body)
         else:
             headers.pop("Content-Length")
-        print(HttpResponseParser.make_startline(status_code))
+
         content = [
             HttpResponseParser.make_startline(status_code),
             HttpResponseParser.make_headers(headers),
