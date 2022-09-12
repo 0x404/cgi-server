@@ -69,6 +69,16 @@ def index_page(**kwargs):
     return response
 
 
+@route("/webroot/log")
+def log_page(**kwargs):
+    try:
+        with open("logs/server_log.html", mode="r", encoding="utf-8") as logfile:
+            response = logfile.read()
+    except FileNotFoundError:
+        response = "<p> log file no found </p>"
+    return response.encode()
+
+
 if __name__ == "__main__":
     # When you have finished the definition of your website above
     # use the `run`` function to run the server directly
