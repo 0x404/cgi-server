@@ -33,9 +33,10 @@ class Session:
         data = self.client_socket.recv(1024)
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
-
         try:
-            response_html = ROUTER.match(config.url, config.method)()
+            response_html = ROUTER.match(config.url, config.method)(
+                **config.query_string
+            )
             if not isinstance(response_html, (str, bytes)):
                 response_html = (
                     f"<P> currently does not support {str(type(response_html))[1:-1]} "

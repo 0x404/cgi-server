@@ -1,4 +1,5 @@
 """HTTP Parser"""
+import urllib.parse as urlparse
 from typing import Optional, Union
 from cgiserver.utils import AttrDict, SplitQueue, HTTPStatus
 
@@ -57,10 +58,27 @@ class HttpRequestParser:
 
     def _parse_startline(self) -> None:
         """Parse the first line of the http request"""
+
+        def _parse_query(query: str):
+            """parse query string to key-value dict"""
+            if len(query) == 0:
+                return AttrDict()
+            query = query.split("&")
+            query = [item.split("=") for item in query]
+            return AttrDict((item[0], item[1]) for item in query)
+
         startline = self.queue.pop("\r\n")
-        # TODO: Resolve url to path, query string, fragment
         method, url, httpver = startline.split()
-        self.config.update({"method": method, "url": url, "http-version": httpver})
+        patrs = urlparse.urlsplit(url)
+        self.config.update(
+            {
+                "http-version": httpver,
+                "method": method,
+                "url": patrs.path,
+                "fragment": patrs.fragment,
+                "query_string": _parse_query(patrs.query),
+            }
+        )
         self.__parse_startline_done = True
 
     def _parse_headers(self) -> None:
