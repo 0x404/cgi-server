@@ -121,8 +121,8 @@ class HttpResponseParser:
             bytes: e.g. b"HTTP/1.1 200 OK\r\n"
         """
         # pylint: disable = no-value-for-parameter
-        status_phrase = HTTPStatus(status_code).phrase.encode()
-        status_code = str(status_code).encode()
+        status_phrase = HTTPStatus(status_code).phrase
+        status_code = str(status_code)
         return f"HTTP/1.1 {status_code} {status_phrase}\r\n".encode()
 
     @staticmethod
@@ -161,7 +161,7 @@ class HttpResponseParser:
             headers["Content-Length"] = len(body)
         else:
             headers.pop("Content-Length")
-
+        print(HttpResponseParser.make_startline(status_code))
         content = [
             HttpResponseParser.make_startline(status_code),
             HttpResponseParser.make_headers(headers),
