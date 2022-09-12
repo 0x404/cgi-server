@@ -85,6 +85,6 @@ def log_page(**kwargs):
 
 if __name__ == "__main__":
     # When you have finished the definition of your website above
-    # use the `run`` function to run the server directly
+    # use the `run` function to run the server directly
     # and then you can browse your website through your browser
     run("127.0.0.1", 5500)
