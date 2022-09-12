@@ -71,6 +71,10 @@ def index_page(**kwargs):
 
 @route("/webroot/log")
 def log_page(**kwargs):
+    """This example is to tell you not to be limited to just a string,
+    we can also open an html file and read it back,
+    to achieve the effect of returning a html page.
+    """
     try:
         with open("logs/server_log.html", mode="r", encoding="utf-8") as logfile:
             response = logfile.read()
