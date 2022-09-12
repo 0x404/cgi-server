@@ -4,7 +4,7 @@ from .router import Router, Route
 ROUTER = Router()
 
 
-def route(path, method="GET"):
+def route(path, /, *, method="GET"):
     """A decorator to bind a function to a URL path.
 
     Args:
