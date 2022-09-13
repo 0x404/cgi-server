@@ -28,7 +28,7 @@ we don't need to find the parameters we want from **kwargs.
 To pass the query string of the URL to the parameter of the binding function,
 and convert it to the corresponding type, I think it's not easy and a lot of effort is needed.
 """
-
+import json
 from cgiserver import route, run
 
 
@@ -62,11 +62,13 @@ def echo(**kwargs):
 def index_page(**kwargs):
     """Decorator's method argument defaults to `GET`.
 
+    You can not only return an HTML string, but also a Json string.
+    
     Whenever a user visit `/webroot/index.html` using `GET` mehtod,
-    he will get a `this is index page` HTML page.
+    he will get a Json objcet with key `content` and `query`.
     """
-    response = "<p> this is index page </p>"
-    return response
+    response = {"content": "this is index.html", "query": kwargs}
+    return json.dumps(response)
 
 
 @route("/webroot/log")
