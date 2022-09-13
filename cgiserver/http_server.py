@@ -22,6 +22,7 @@ class HTTPServer:
         self.should_stop = False
 
     def close(self) -> None:
+        """close the server"""
         self.should_stop = True
 
     def serve_forever(self) -> None:
