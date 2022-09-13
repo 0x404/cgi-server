@@ -21,6 +21,9 @@ class HTTPServer:
         self.port = port
         self.should_stop = False
 
+    def close(self) -> None:
+        self.should_stop = True
+
     def serve_forever(self) -> None:
         """Start the server, and whenever a new connection comes,
         create a session process to process the connection.
