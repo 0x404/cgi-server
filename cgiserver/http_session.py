@@ -37,7 +37,11 @@ class Session:
             response_html = ROUTER.match(config.url, config.method)(
                 **config.query_string
             )
-            if not isinstance(response_html, (str, bytes)):
+            if not isinstance(response_html, (str, bytes)) and hasattr(
+                response_html, "__str__"
+            ):
+                response_html = str(response_html)
+            else:
                 response_html = (
                     f"<P> currently does not support {str(type(response_html))[1:-1]} "
                     f"as the return value of the decorated function</P>"

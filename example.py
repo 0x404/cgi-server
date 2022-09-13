@@ -6,8 +6,10 @@ Whenever a user visits the corresponding URL,
 the system will call the function bound to the URL,
 and pass the return value of the function to user through html.
 
-So far, the return value of the decorated function should be a string.
-In the next I will support more types like None, int, json etc.
+At the current position, the return value of the decorated function can be any type,
+such as `str`, `bytes`, `int`, `float`, or even `None`.
+It can also be a custom type, but in order to enable the custom type to be transmitted through html,
+please implement `__str__` method for the custom type.
 
 In the future I would like to support the following feature,
 I think this feature is more user-friendly,
@@ -73,7 +75,7 @@ def index_page(**kwargs):
 
 @route("/webroot/log")
 def log_page(**kwargs):
-    """This example is to tell you not to be limited to just a string,
+    """This example is to show you not to be limited to just a string,
     we can also open an html file and read it back,
     to achieve the effect of returning a html page.
     """
