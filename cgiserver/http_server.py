@@ -1,11 +1,12 @@
 """HTTP Server"""
-import threading
 import socket
+from concurrent import futures
 from typing import Any
 from cgiserver.http_session import Session
 from cgiserver.logging import get_logger
 
 logger = get_logger()
+MAX_CONN = 20
 
 
 class HTTPServer:
@@ -37,6 +38,7 @@ class HTTPServer:
         # see details: https://stackoverflow.com/questions/34871191/cant-close-socket-on-keyboardinterrupt
         server_socket.settimeout(1)
         logger.info("server running on http://%s:%s", self.host, self.port)
+        executor = futures.ThreadPoolExecutor(MAX_CONN)
         while not self.should_stop:
             try:
                 client_socket, client_address = server_socket.accept()
@@ -45,10 +47,8 @@ class HTTPServer:
             except KeyboardInterrupt:
                 logger.info("server has been shutdown!")
                 break
-            handle_thread = threading.Thread(
-                target=Session(client_socket, client_address)
-            )
-            handle_thread.start()
+            executor.submit(Session(client_socket, client_address))
+        executor.shutdown(wait=True)
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         self.serve_forever()
