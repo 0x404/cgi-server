@@ -1,5 +1,6 @@
 import socket
 import threading
+from time import sleep
 from cgiserver.http_server import HTTPServer
 
 
@@ -10,6 +11,7 @@ def test_server():
     server = HTTPServer(HOST, PORT)
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.start()
+    sleep(3)
 
     client_socket = socket.socket()
     client_socket.connect((HOST, PORT))
