@@ -20,7 +20,7 @@ def web_page(**kwargs):
 
 具体请见[example.py](./example.py)，我写了一个非常详细的使用说明。
 
-后续将会打包的`pypi`，大家可以直接通过`pip`命令安装，非常方便。
+后续将会打包到`pypi`，大家可以直接通过`pip`命令安装，非常方便。
 
 ## 目前功能
 
@@ -28,6 +28,16 @@ def web_page(**kwargs):
 * `HTTP`服务器
 * 静态路由和`CGI`路由
 * 路由装饰器
+
+## TODO
+
+* 最大链接数量(xzy)
+* 解析HTTP用正则(wzx)
+* 解析HTTP的报错处理
+* 解析decorated function(zqh)
+* 实现参数能够通过模板指定(zqh)
+* 实现decorated function[返回模板](http://bottlepy.org/docs/dev/tutorial.html#templates)
+* 欢迎重构
 
 ## 参与开发
 
