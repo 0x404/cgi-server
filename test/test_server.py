@@ -4,6 +4,7 @@ from cgiserver.http_server import HTTPServer
 
 
 def test_server():
+
     HOST = "0.0.0.0"
     PORT = 5500
     server = HTTPServer(HOST, PORT)
