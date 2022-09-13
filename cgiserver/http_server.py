@@ -19,6 +19,7 @@ class HTTPServer:
     def __init__(self, host: str, port: int) -> None:
         self.host = host
         self.port = port
+        self.should_stop = False
 
     def serve_forever(self) -> None:
         """Start the server, and whenever a new connection comes,
@@ -32,7 +33,7 @@ class HTTPServer:
         # see details: https://stackoverflow.com/questions/34871191/cant-close-socket-on-keyboardinterrupt
         server_socket.settimeout(1)
         logger.info("server running on http://%s:%s", self.host, self.port)
-        while True:
+        while not self.should_stop:
             try:
                 client_socket, client_address = server_socket.accept()
             except socket.timeout:

@@ -33,3 +33,7 @@ jobs:
       # Code Style Analyse
       - name: Code Style Analyse
         run:  docker run cgiserver scripts/code-style.sh
+      
+      # Code Style Analyse
+      - name: Unit Test
+        run:  docker run cgiserver scripts/unit-test.sh
