@@ -31,7 +31,7 @@ To pass the query string of the URL to the parameter of the binding function,
 and convert it to the corresponding type, I think it's not easy and a lot of effort is needed.
 """
 import json
-from cgiserver import route, run
+from cgiserver import route, run, crun
 
 
 @route("/webroot", method="GET")
@@ -91,4 +91,9 @@ if __name__ == "__main__":
     # When you have finished the definition of your website above
     # use the `run` function to run the server directly
     # and then you can browse your website through your browser
-    run("127.0.0.1", 5500)
+    run("127.0.0.1", 8888)
+
+    # You also launch the server via the command line,
+    # Use the function `crun`` and give the corresponding parameters on the command line.
+    # e.g. python examply.py --host "127.0.0.1" --port 8888 --maxconnect 20
+    # crun()
