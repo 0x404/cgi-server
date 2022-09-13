@@ -63,7 +63,7 @@ def index_page(**kwargs):
     """Decorator's method argument defaults to `GET`.
 
     You can not only return an HTML string, but also a Json string.
-    
+
     Whenever a user visit `/webroot/index.html` using `GET` mehtod,
     he will get a Json objcet with key `content` and `query`.
     """
