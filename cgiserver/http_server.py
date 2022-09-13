@@ -20,6 +20,11 @@ class HTTPServer:
     def __init__(self, host: str, port: int) -> None:
         self.host = host
         self.port = port
+        self.should_stop = False
+
+    def close(self) -> None:
+        """close the server"""
+        self.should_stop = True
 
     def serve_forever(self) -> None:
         """Start the server, and whenever a new connection comes,
@@ -34,7 +39,7 @@ class HTTPServer:
         server_socket.settimeout(1)
         logger.info("server running on http://%s:%s", self.host, self.port)
         executor = futures.ThreadPoolExecutor(MAX_CONN)
-        while True:
+        while not self.should_stop:
             try:
                 client_socket, client_address = server_socket.accept()
             except socket.timeout:
