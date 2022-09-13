@@ -4,7 +4,8 @@ from cgiserver.http_server import HTTPServer
 
 
 def test_server():
-    HOST = "127.0.0.1"
+
+    HOST = "0.0.0.0"
     PORT = 5500
     server = HTTPServer(HOST, PORT)
     server_thread = threading.Thread(target=server.serve_forever)
@@ -14,7 +15,7 @@ def test_server():
     client_socket.connect((HOST, PORT))
     http_request = (
         b"GET / HTTP/1.1\r\n"
-        b"Host: 127.0.0.1:8888\r\n"
+        b"Host: 0.0.0.0:5500\r\n"
         b"Connection: keep-alive\r\n"
         b"Cache-Control: max-age=0\r\n"
         b'sec-ch-ua: "Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"\r\n'
@@ -33,7 +34,7 @@ def test_server():
     client_socket.sendall(http_request)
     expected_response = (
         b"HTTP/1.1 200 OK\r\n"
-        b"Host: 127.0.0.1:8888\r\n"
+        b"Host: 0.0.0.0:5500\r\n"
         b"Connection: keep-alive\r\n"
         b"Cache-Control: max-age=0\r\n"
         b'sec-ch-ua: "Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"\r\n'
