@@ -41,7 +41,9 @@ class Session:
                 response_html, "__str__"
             ):
                 response_html = str(response_html)
-            else:
+            if not isinstance(response_html, (str, bytes)) and not hasattr(
+                response_html, "__str__"
+            ):
                 response_html = (
                     f"<P> currently does not support {str(type(response_html))[1:-1]} "
                     f"as the return value of the decorated function</P>"
