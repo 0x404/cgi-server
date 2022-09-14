@@ -88,12 +88,14 @@ def log_page(**kwargs):
 
 
 if __name__ == "__main__":
-    # When you have finished the definition of your website above
-    # use the `run` function to run the server directly
-    # and then you can browse your website through your browser
+    # When you have finished the definition of your website above,
+    # use the function `run` to run the server directly,
+    # and then you can browse your website through your browser.
+
     run("127.0.0.1", 8888)
 
-    # You also launch the server via the command line,
-    # Use the function `crun`` and give the corresponding parameters on the command line.
+    # You can also launch the server via the command line,
+    # Use the function `crun` and give the corresponding parameters on the command line.
     # e.g. python examply.py --host "127.0.0.1" --port 8888 --maxconnect 20
+
     # crun()
