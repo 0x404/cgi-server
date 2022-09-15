@@ -35,7 +35,7 @@ def test_server():
     )
     client_socket.sendall(http_request)
     expected_response = (
-        b"HTTP/1.1 200 OK\r\n"
+        b"HTTP/1.1 404 Not Found\r\n"
         b"Host: 0.0.0.0:5500\r\n"
         b"Connection: keep-alive\r\n"
         b"Cache-Control: max-age=0\r\n"
