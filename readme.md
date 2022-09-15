@@ -28,14 +28,15 @@ def web_page(**kwargs):
 * `HTTP`服务器
 * 静态路由和`CGI`路由
 * 路由装饰器
+* 最大链接数量
 
 ## TODO
 
-* 最大链接数量(xzy)
-* 解析HTTP用正则(wzx)
-* 解析HTTP的报错处理
+* 解析HTTP的报错处理(wzx)
 * 解析decorated function(zqh)
 * 实现参数能够通过模板指定(zqh)
+* 解析HTTP用正则匹配
+* 完善[测试](./tests/)，目前的测试不够完善，尤其是对出错处理
 * 实现decorated function[返回模板](http://bottlepy.org/docs/dev/tutorial.html#templates)
 * 欢迎重构
 
