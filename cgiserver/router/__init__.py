@@ -1,7 +1,7 @@
 """Router"""
 from .router import Router, Route
 
-ROUTER = Router()
+GLOBALROUTER = Router()
 
 
 def route(path, /, *, method="GET"):
@@ -21,10 +21,10 @@ def route(path, /, *, method="GET"):
 
     def decorator(callback):
         new_route = Route(path, method, callback)
-        ROUTER.add(path, method, new_route)
+        GLOBALROUTER.add(path, method, new_route)
         return callback
 
     return decorator
 
 
-__all__ = ["ROUTER", "Router", "Route", "route"]
+__all__ = ["GLOBALROUTER", "route"]

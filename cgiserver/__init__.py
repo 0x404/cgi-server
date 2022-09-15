@@ -20,12 +20,10 @@ def crun():
     parser = ArgumentParser()
     parser.add_argument("--host", type=str, default="127.0.0.1", help="server's host")
     parser.add_argument("--port", type=int, default=8888, help="server's port")
-    parser.add_argument(
-        "-m", "--maxconnect", type=int, default=20, help="max connections"
-    )
+    parser.add_argument("-m", "--maxc", type=int, default=20, help="max connections")
 
     args = parser.parse_args()
-    run(host=args.host, port=args.port, max_connection=args.maxconnect)
+    run(host=args.host, port=args.port, max_connection=args.maxc)
 
 
 __all__ = ["route", "run", "crun"]

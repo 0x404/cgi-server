@@ -5,7 +5,7 @@ from typing import Any
 from cgiserver.http_session import Session
 from cgiserver.logging import get_logger
 
-logger = get_logger()
+LOGGER = get_logger()
 
 
 class HTTPServer:
@@ -37,7 +37,7 @@ class HTTPServer:
         # while being able to catch KeyboardInterrupt to stop server
         # see details: https://stackoverflow.com/questions/34871191/cant-close-socket-on-keyboardinterrupt
         server_socket.settimeout(1)
-        logger.info("server running on http://%s:%s", self.host, self.port)
+        LOGGER.info("server running on http://%s:%s", self.host, self.port)
         executor = futures.ThreadPoolExecutor(self.max_connection)
         while not self.should_stop:
             try:
@@ -45,10 +45,10 @@ class HTTPServer:
             except socket.timeout:
                 continue
             except KeyboardInterrupt:
-                logger.info("server has been shutdown!")
                 break
             executor.submit(Session(client_socket, client_address))
         executor.shutdown(wait=True)
+        LOGGER.info("server has been shutdown!")
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         self.serve_forever()

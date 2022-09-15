@@ -5,9 +5,9 @@ based on the request, and a thread will be opened to run the session.
 """
 import socket
 from typing import Any
-from cgiserver.utils import html_file_loader, AttrDict
-from cgiserver.router import ROUTER
 from cgiserver.logging import get_logger
+from cgiserver.router import GLOBALROUTER
+from cgiserver.utils import html_file_loader, AttrDict
 from cgiserver.http_parser import HttpRequestParser, HttpResponseParser
 
 # pylint: disable = broad-except
@@ -16,7 +16,7 @@ try:
 except Exception:
     NOFOUND_HTML = b"<p> 404 NO FOUND </p>"
 
-logger = get_logger()
+LOGGER = get_logger()
 
 
 class Session:
@@ -28,13 +28,13 @@ class Session:
         self.client_socket = client_socket
         self.client_address = client_address
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    def __call__(self, *args: Any, **kwds: Any) -> None:
         parser = HttpRequestParser()
         data = self.client_socket.recv(1024)
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
         try:
-            response_html = ROUTER.match(config.url, config.method)(
+            response_html = GLOBALROUTER.match(config.url, config.method)(
                 **config.query_string
             )
             if not isinstance(response_html, (str, bytes)) and hasattr(
@@ -57,7 +57,7 @@ class Session:
         self.client_socket.send(response)
         self.client_socket.close()
 
-    def run(self, *args: Any, **kwds: Any) -> Any:
+    def run(self, *args: Any, **kwds: Any) -> None:
         """Run the session, handle an HTTP connection once"""
         # pylint: disable = unnecessary-dunder-call
         return self.__call__(args, kwds)
@@ -80,4 +80,4 @@ class Session:
         content_length = config.headers["Content-Length"]
 
         text = f'[{client_ip}:{client_port}] "{method} {url} {http_version}" {status_code} {content_length} "{user_agent}"'
-        logger.info(text)
+        LOGGER.info(text)
