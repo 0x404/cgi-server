@@ -29,11 +29,16 @@ class Session:
         self.client_address = client_address
 
     def __call__(self, *args: Any, **kwds: Any) -> None:
+        # parse client HTTP request
+        # TODO: detect bad request and set status code to 400
         parser = HttpRequestParser()
         data = self.client_socket.recv(1024)
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
+
+        # attempt to call the bound function to get the html body
         try:
+            status_code = 200
             response_html = GLOBALROUTER.match(config.url, config.method)(
                 **config.query_string
             )
@@ -49,10 +54,16 @@ class Session:
                     f"as the return value of the decorated function</P>"
                 )
         except Exception:
+            status_code = 404
             response_html = NOFOUND_HTML
 
-        response = HttpResponseParser.make_response(200, config.headers, response_html)
-        self._log_current_request(config, self.client_address, 200)
+        # response to client
+        response = HttpResponseParser.make_response(
+            status_code=status_code,
+            headers=config.headers,
+            body=response_html,
+        )
+        self._log_current_request(status_code, config)
 
         self.client_socket.send(response)
         self.client_socket.close()
@@ -62,9 +73,7 @@ class Session:
         # pylint: disable = unnecessary-dunder-call
         return self.__call__(args, kwds)
 
-    def _log_current_request(
-        self, config: AttrDict, client_address: tuple[str, int], status_code: int
-    ) -> None:
+    def _log_current_request(self, status_code: int, config: AttrDict) -> None:
         """log current request.
 
         Args:
@@ -72,12 +81,12 @@ class Session:
             client_address (tuple[str, int]): client address.
             status_code (int): HTPP status code.
         """
-        client_ip, client_port = client_address
+        client_ip, client_port = self.client_address
         method = config.method
         url = config.url
-        http_version = config["http-version"]
+        http_version = config.get("http-version", "HTTP/1.1")
         user_agent = config.headers["User-Agent"]
         content_length = config.headers["Content-Length"]
 
-        text = f'[{client_ip}:{client_port}] "{method} {url} {http_version}" {status_code} {content_length} "{user_agent}"'
-        LOGGER.info(text)
+        msg = f'[{client_ip}:{client_port}] "{method} {url} {http_version}" {status_code} {content_length} "{user_agent}"'
+        LOGGER.info(msg)
