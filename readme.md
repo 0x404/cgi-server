@@ -2,6 +2,15 @@
 
 ## 教程
 
+### 从PYPI安装
+
+执行如下命令即可安装（PyPI上有项目源码，结课前勿外传）
+
+```shell
+pip install cgi-server
+```
+
+
 ### 从源码安装
 
 下载源码，可以从最新的[release](https://github.com/0x404/cgi-server/releases/)下载代码，也可以通过git下载
