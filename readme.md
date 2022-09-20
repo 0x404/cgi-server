@@ -48,7 +48,7 @@ def web_page(**kwargs):
     return response
 
 if __name__ == "__main__":
-	run("127.0.0.1", 8888)
+    run("127.0.0.1", 8888)
 ```
 
 执行如下命令：
