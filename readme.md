@@ -1,26 +1,60 @@
 # 多线程CGI服务器
 
-## 使用方法
+## 教程
 
-参考`Flask`框架的设计，通过装饰器让用户自己组织网站该显示的内容
+### 从源码安装
 
-```python
-from cgiserver import route
+下载源码，可以从最新的[release](https://github.com/0x404/cgi-server/releases/)下载代码，也可以通过git下载
 
-@route("/webroot", method="GET")
-def web_page(**kwargs):
-    """Bind function `web_page` to URL '/webroot'.
-    Whenever a user visit `/webroot` using `GET` mehtod,
-    he will get a `this is web root page` HTML page.
-    """
-    response = "<p> this is web root page </p>"
-    return response
-
+```shell
+git clone git@github.com:0x404/cgi-server.git
 ```
 
-具体请见[example.py](./example.py)，我写了一个非常详细的使用说明。
+下载完成后，进入文件根目录，执行安装命令
 
-后续将会打包到`pypi`，大家可以直接通过`pip`命令安装，非常方便。
+```shell
+python setup.py install
+```
+
+安装成功后，即可作为一个普通的Python库使用
+
+### 使用
+
+下面的例子构建了一个如何利用本库快速创建一个`hello world`页面
+
+
+```python
+# hello.py
+from cgiserver import route, run
+
+@route("/helloworld", method="GET")
+def web_page(**kwargs):
+    response = "<h1> Hello World </h1>"
+    return response
+
+if __name__ == "__main__":
+	run("127.0.0.1", 8888)
+```
+
+执行如下命令：
+
+```
+python hello.py
+```
+
+即可在http://127.0.0.1:8888/helloworld看到一个`hello world`页面
+
+更详细的使用说明请见[example.py](./example.py)，里面详细介绍了本库的各种功能
+
+## 卸载
+
+使用如下命令完成卸载
+
+```shell
+pip uninstall cgi-server
+```
+
+
 
 ## 目前功能
 
@@ -29,6 +63,8 @@ def web_page(**kwargs):
 * 静态路由和`CGI`路由
 * 路由装饰器
 * 最大链接数量
+
+
 
 ## TODO
 
@@ -41,6 +77,8 @@ def web_page(**kwargs):
 * 服务器处理请求可以说是一个IO形的行为，有很多时间消耗在（等待）输入/输出上；Python的全局解释锁导致这类程序多线程和单线程区别并不是很大，为了提高系统性能，我们是不是应该用多进程来替代多线程呢？
 * 实现decorated function[返回模板](http://bottlepy.org/docs/dev/tutorial.html#templates)
 * 欢迎重构
+
+
 
 ## 参与开发
 
@@ -62,6 +100,8 @@ def web_page(**kwargs):
    - 在完成自己的功能时请自己开一个分支，在自己的分支上完成代码的提交，待功能完成后提出合并请求
    - 已经添加github action来自动完成代码风格和静态代码检查，请确保提交前自己的commit是“打钩”的状态
    - 合并请求需要至少一个approval才可以合入master（大家都有权限）
+
+
 
 
 ## 设计思路
