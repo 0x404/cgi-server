@@ -42,7 +42,7 @@ if __name__ == "__main__":
 python hello.py
 ```
 
-即可在http://127.0.0.1:8888/helloworld看到一个`hello world`页面
+即可在`http://127.0.0.1:8888/helloworld`看到一个`hello world`页面
 
 更详细的使用说明请见[example.py](./example.py)，里面详细介绍了本库的各种功能
 
