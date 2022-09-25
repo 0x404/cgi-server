@@ -2,6 +2,7 @@
 # pylint: disable = wildcard-import
 from typing import Any
 from cgiserver.utils.exceptions import *
+import re
 
 
 class Route:
@@ -116,6 +117,17 @@ class Router:
         """
         # TODO: support regular matching
         # the current method is too weak
+        # regular matching 1: (https?://)[^\s]*
+        # regular matching 2: (http[s]://)(ip)([:port])(path)
+        #                     (https?://)([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})(:[0-9]{1,4})?([^\s])*
+        print("path:", path)
+        ret = re.match("([^\s])*", path)
+        # ret = re.match("(https?://)([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})(:[0-9]{1,4})?([^\s])*", path)
+        if ret:
+            path = ret.group()
+        else:
+            path = ""
+        print("re-path:", path)
         path = path.strip("/")
         tokens = path.split("/")
         for token in tokens:

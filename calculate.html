@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>online test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+body {
+background-color:#d2e7b2;
+ }
+</style>
+<!--<script src="calculate/calculatejs.js">-->
+</head>
+<body>
+<center>
+<h1>Calculater</h1>
+<p>输入两个加数和运算符号</p>
+
+<!--<form>-->
+<form method="post" action ="/cal_ans">
+<!--<form method="post" action ="calculate.html">-->
+<!--<form method="get">-->
+    <table border="0" cellspacing="" cellpadding="">
+        <tr>
+            <td align="right">input1:</td>
+            <td><input type="text" name="value1" value="" size="20" maxlength="20" /><br/></td>
+        </tr>
+        <tr>
+            <td align="right">op:</td>
+            <td><input type="text" name="op" value="" size="20" maxlength="20" /><br/></td>
+        </tr>
+        <tr>
+            <td align="right">input2:</td>
+            <td><input type="text" name="value2" value="" size="20" maxlength="20" /><br/></td>
+        </tr>
+        <tr>
+            <td align="right"><b>answer:</b></td>
+<!--            <td><p id="answer"/><br/></td>-->
+            <td><input type="text" name="answer" value=""  size="20" maxlength="20" id="answer"/><br/></td>
+        </tr>
+    </table>
+<!--    <input type="submit" value="submit"/><br/>-->
+<!--    <input type="button" value="submit" onclick="getAns()" /><br/>-->
+    <input type="submit" value="submit" onclick="getAns()" /><br/>
+    <a href="/webroot">Return To Webroot</a>
+
+
+
+
+</form>
+</center>
+
+<script>
+    function getAns(){
+        var value1=document.getElementsByName('value1')[0].value;
+        var value2=document.getElementsByName('value2')[0].value;
+        var op=document.getElementsByName('op')[0].value;
+        var ans=0;
+        if(op == "+"){
+            ans = Number(value1) + Number(value2);
+        }
+        else if(op == "-"){
+            ans = Number(value1) - Number(value2);
+        }
+        else if(op == "*"){
+            ans = Number(value1) * Number(value2);
+        }
+        else if(op == "/"){
+            ans = Number(value1) / Number(value2);
+        }
+        else{
+            ans = "error";
+        }
+    //    ans=60;
+    //    document.write(value1+" "+op+" "+value2+" = "+ans);
+        document.getElementById("answer").value=ans;
+        document.getElementById("answer").submit();
+    }
+</script>
+</body>
+</html>

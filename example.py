@@ -41,7 +41,10 @@ def web_page(**kwargs):
     Whenever a user visit `/webroot` using `GET` mehtod,
     he will get a `this is web root page` HTML page.
     """
-    response = "<p> this is web root page </p>"
+
+    with open("root.html", mode="r", encoding="utf-8") as logfile:
+        response = logfile.read()
+    # response = "<p> this is web root page </p>"
     return response
 
 
@@ -85,6 +88,36 @@ def log_page(**kwargs):
     except FileNotFoundError:
         response = "<p> log file no found </p>"
     return response.encode()
+
+
+@route("/calculate", method="GET")
+def calculate(**kwargs):
+    try:
+        with open("calculate.html", mode="r", encoding="utf-8") as logfile:
+            response = logfile.read()
+    except FileNotFoundError:
+        response = "<p> calculate file no found </p>"
+    return response
+
+
+@route("/cal_ans", method="POST")
+def cal_ans(**kwargs):
+    try:
+        with open("calculate.html", mode="r", encoding="utf-8") as file:
+            response = file.read()
+    except FileNotFoundError:
+        response = "<p> file no found </p>"
+    return response
+
+
+@route("/dataquery", method="GET")
+def dataquery(**kwargs):
+    try:
+        with open("DataQuery.html", mode="r", encoding="utf-8") as logfile:
+            response = logfile.read()
+    except FileNotFoundError:
+        response = "<p> calculate file no found </p>"
+    return response
 
 
 if __name__ == "__main__":

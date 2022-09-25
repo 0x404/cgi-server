@@ -9,12 +9,15 @@ from cgiserver.logging import get_logger
 from cgiserver.router import GLOBALROUTER
 from cgiserver.utils import html_file_loader, AttrDict
 from cgiserver.http_parser import HttpRequestParser, HttpResponseParser
+from cgiserver.utils.exceptions import *
 
 # pylint: disable = broad-except
 try:
     NOFOUND_HTML = html_file_loader("cgiserver/static/404.html")
 except Exception:
     NOFOUND_HTML = b"<p> 404 NO FOUND </p>"
+
+BADREQUEST_HTML = html_file_loader("cgiserver/static/400.html")
 
 LOGGER = get_logger()
 
@@ -31,29 +34,57 @@ class Session:
     def __call__(self, *args: Any, **kwds: Any) -> None:
         # parse client HTTP request
         # TODO: detect bad request and set status code to 400
+        status_code = 0
+        # try:
         parser = HttpRequestParser()
         data = self.client_socket.recv(1024)
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
 
         # attempt to call the bound function to get the html body
+
         try:
             status_code = 200
+            print("config.url, config.method", config.url, config.method)
+            if parser.startlineMethodError is True:
+                raise StartlineMethodError
+            if parser.startlineURLError is True:
+                raise StartlineURLError
+            if parser.startlineHttpverError is True:
+                raise StartlineHttpverError
+            if parser.httpContentLengthError is True:
+                raise HttpContentLengthError
+            if parser.httpHeaderlineValueLoss is True:
+                raise HttpHeaderlineValueLoss
+
+            if len(str(config.url)) > 20:
+                print("too long")
+                raise UrlTooLong
             response_html = GLOBALROUTER.match(config.url, config.method)(
                 **config.query_string
             )
             if not isinstance(response_html, (str, bytes)) and hasattr(
-                response_html, "__str__"
+                    response_html, "__str__"
             ):
                 response_html = str(response_html)
             if not isinstance(response_html, (str, bytes)) and not hasattr(
-                response_html, "__str__"
+                    response_html, "__str__"
             ):
                 response_html = (
                     f"<P> currently does not support {str(type(response_html))[1:-1]} "
                     f"as the return value of the decorated function</P>"
                 )
-        except Exception:
+
+        except (StartlineMethodError, StartlineURLError, StartlineHttpverError, HttpContentLengthError):
+            print("400")
+            status_code = 400
+            response_html = BADREQUEST_HTML
+        except UrlTooLong:
+            print("Url too long")
+            status_code = 400
+            response_html = BADREQUEST_HTML
+        except (RouteOverwriteError, InvalidRoutePath, InvalidRouteMethod):
+            print("404")
             status_code = 404
             response_html = NOFOUND_HTML
 

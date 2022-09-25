@@ -1,7 +1,9 @@
 """HTTP Parser"""
 import urllib.parse as urlparse
+import re
 from typing import Optional, Union
 from cgiserver.utils import AttrDict, SplitQueue, HTTPStatus
+from cgiserver.utils.exceptions import *
 
 # pylint: disable = no-member
 
@@ -24,10 +26,30 @@ class HttpRequestParser:
         self.__parse_headers_done = False
         self.__parse_content_done = False
 
+        self.startlineMethodError = False
+        self.startlineURLError = False
+        self.startlineHttpverError = False
+        self.httpContentLengthError = False
+        self.httpHeaderlineValueLoss = False
+
     @property
     def completed(self) -> bool:
         """Whether the parsing is complete"""
         return self.__parse_content_done
+
+    def is_http_url(self, s):
+        # regex = re.compile(
+        #     r'^(?:http|ftp)s?://'  # http:// or https://
+        #     r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        #     r'localhost|'  # localhost...
+        #     r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        #     r'(?::\d+)?'  # optional port
+        #     r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        regex = re.compile("([^\s])*", re.IGNORECASE)
+        if regex.match(s):
+            return True
+        else:
+            return False
 
     def parse(self, data: Union[str, bytes]) -> AttrDict:
         """Parse Http request.
@@ -40,6 +62,7 @@ class HttpRequestParser:
             everything in this http request. return None if the parser
             is not completed.
         """
+        print("data", data)
         if isinstance(data, bytes):
             data = data.decode("utf-8")
 
@@ -69,6 +92,22 @@ class HttpRequestParser:
 
         startline = self.queue.pop("\r\n")
         method, url, httpver = startline.split()
+
+        # wzx
+        # print("startline", method, url, httpver)
+        """"startline error"""
+        if method != 'GET' and method != 'HEAD' and method != 'POST' and method != 'PUT' and method != 'DELETE' \
+                and method != 'TRACE' and method != 'CONNECT' and method != 'OPTIONS':
+            self.startlineMethodError = True
+            # raise StartlineMethodError
+        if not self.is_http_url(url):
+            self.startlineURLError = True
+            # raise StartlineURLError
+        if httpver != 'HTTP/1.0' and httpver != 'HTTP/1.1':
+            self.startlineHttpverError = True
+            # raise StartlineHttpverError
+        # wzx
+
         patrs = urlparse.urlsplit(url)
         self.config.update(
             {
@@ -87,7 +126,11 @@ class HttpRequestParser:
             headerline = self.queue.pop("\r\n")
             if headerline:
                 name, value = headerline.strip().split(": ", 1)
-                self.headers[name] = value
+                if value:
+                    self.headers[name] = value
+                else:
+                    self.httpHeaderlineValueLoss = True
+                    # raise HttpHeaderlineValueLoss
             else:
                 self.__parse_headers_done = True
                 break
@@ -105,6 +148,10 @@ class HttpRequestParser:
             self.queue.clear()
         if len(self.config.content) == content_length:
             self.__parse_content_done = True
+        else:
+            self.__parse_content_done = True
+            self.httpContentLengthError = True
+            # raise HttpContentLengthError
 
 
 class HttpResponseParser:

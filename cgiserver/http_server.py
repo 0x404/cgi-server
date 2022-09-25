@@ -4,6 +4,7 @@ from concurrent import futures
 from typing import Any
 from cgiserver.http_session import Session
 from cgiserver.logging import get_logger
+from cgiserver.utils.exceptions import *
 
 LOGGER = get_logger()
 
