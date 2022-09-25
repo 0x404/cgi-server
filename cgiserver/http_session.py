@@ -7,15 +7,16 @@ import socket
 from typing import Any
 from cgiserver.logging import get_logger
 from cgiserver.router import GLOBALROUTER
-from cgiserver.utils import html_file_loader, AttrDict
+from cgiserver.utils import AttrDict
 from cgiserver.http_parser import HttpRequestParser, HttpResponseParser
+from cgiserver.setting import GLOBAL_SETTING
+from cgiserver.utils.exceptions import (
+    InvalidRoutePath,
+    InvalidRouteMethod,
+    RequestForbidden,
+)
 
 # pylint: disable = broad-except
-try:
-    NOFOUND_HTML = html_file_loader("cgiserver/static/404.html")
-except Exception:
-    NOFOUND_HTML = b"<p> 404 NO FOUND </p>"
-
 LOGGER = get_logger()
 
 
@@ -27,6 +28,12 @@ class Session:
     ) -> None:
         self.client_socket = client_socket
         self.client_address = client_address
+        self.default_html = {
+            400: GLOBAL_SETTING.template_400,
+            403: GLOBAL_SETTING.template_403,
+            404: GLOBAL_SETTING.template_404,
+            200: "something went wrong",
+        }
 
     def __call__(self, *args: Any, **kwds: Any) -> None:
         # parse client HTTP request
@@ -35,7 +42,6 @@ class Session:
         data = self.client_socket.recv(1024)
         while (config := parser.parse(data)) is None:
             data = self.client_socket.recv(1024)
-
         # attempt to call the bound function to get the html body
         try:
             status_code = 200
@@ -53,9 +59,15 @@ class Session:
                     f"<P> currently does not support {str(type(response_html))[1:-1]} "
                     f"as the return value of the decorated function</P>"
                 )
-        except Exception:
+        except (InvalidRoutePath, InvalidRouteMethod):
             status_code = 404
-            response_html = NOFOUND_HTML
+            response_html = self.default_html[status_code]
+        except RequestForbidden:
+            status_code = 403
+            response_html = self.default_html[status_code]
+        except Exception:
+            status_code = 200
+            response_html = self.default_html[status_code]
 
         # response to client
         response = HttpResponseParser.make_response(
