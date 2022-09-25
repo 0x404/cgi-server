@@ -15,3 +15,19 @@ class InvalidRouteMethod(Exception):
 
 class RequestForbidden(Exception):
     """Request forbidden"""
+
+
+class HTTPRequestError(Exception):
+    """General HTTP request error"""
+
+
+class InvalidMethod(HTTPRequestError):
+    """Invalid HTTP method"""
+
+
+class InvalidHeader(HTTPRequestError):
+    """Invalid HTTP header"""
+
+
+class InvalidContent(HTTPRequestError):
+    """Invalid HTTP Content"""
