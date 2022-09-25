@@ -4,16 +4,17 @@ Whenever a request comes from the server, a session will be created
 based on the request, and a thread will be opened to run the session.
 """
 import socket
-from typing import Any
+from typing import Any, Union
 from cgiserver.logging import get_logger
 from cgiserver.router import GLOBALROUTER
-from cgiserver.utils import AttrDict
+from cgiserver.utils import AttrDict, DEFAULT_HEADERS
 from cgiserver.http_parser import HttpRequestParser, HttpResponseParser
 from cgiserver.setting import GLOBAL_SETTING
 from cgiserver.utils.exceptions import (
     InvalidRoutePath,
     InvalidRouteMethod,
     RequestForbidden,
+    HTTPRequestError,
 )
 
 # pylint: disable = broad-except
@@ -35,14 +36,34 @@ class Session:
             200: "something went wrong",
         }
 
-    def __call__(self, *args: Any, **kwds: Any) -> None:
-        # parse client HTTP request
-        # TODO: detect bad request and set status code to 400
+    def parser_http_request(self):
+        """Parse HTTP request.
+
+        Raises:
+            HTTPRequestError: if got a bad http request.
+
+        Returns:
+            AttrDict: parse result.
+        """
         parser = HttpRequestParser()
         data = self.client_socket.recv(1024)
-        while (config := parser.parse(data)) is None:
-            data = self.client_socket.recv(1024)
-        # attempt to call the bound function to get the html body
+        try:
+            while (config := parser.parse(data)) is None:
+                data = self.client_socket.recv(1024)
+        except HTTPRequestError as err:
+            raise HTTPRequestError from err
+        return config
+
+    def call_bound_function(self, config: AttrDict):
+        """Attempt to call the bound function to get the html body
+
+        Args:
+            config (AttrDict): parser result.
+
+        Returns:
+            int: status code.
+            Union[str, bytes]: response html body.
+        """
         try:
             status_code = 200
             response_html = GLOBALROUTER.match(config.url, config.method)(
@@ -68,17 +89,37 @@ class Session:
         except Exception:
             status_code = 200
             response_html = self.default_html[status_code]
+        return status_code, response_html
 
-        # response to client
+    def response_client(self, status_code: int, response_html: Union[str, bytes] = ""):
+        """Send HTTP Response to clinet.
+
+        Args:
+            status_code (int): status code.
+            response_html (Union[str, bytes], optional): response html body. Defaults to "".
+        """
         response = HttpResponseParser.make_response(
             status_code=status_code,
-            headers=config.headers,
+            headers=DEFAULT_HEADERS,
             body=response_html,
         )
-        self._log_current_request(status_code, config)
-
         self.client_socket.send(response)
         self.client_socket.close()
+
+    def __call__(self, *args: Any, **kwds: Any) -> None:
+        # step1: parse http request
+        try:
+            config = self.parser_http_request()
+        except HTTPRequestError:
+            self.response_client(400, self.default_html[400])
+            return
+
+        # step2: call bound function
+        status_code, response_html = self.call_bound_function(config)
+
+        # step3: response to clinet
+        self.response_client(status_code, response_html)
+        self._log_current_request(status_code, config)
 
     def run(self, *args: Any, **kwds: Any) -> None:
         """Run the session, handle an HTTP connection once"""
