@@ -1,7 +1,12 @@
 """HTTP Parser"""
 import urllib.parse as urlparse
 from typing import Optional, Union
-from cgiserver.utils import AttrDict, SplitQueue, HTTPStatus
+from cgiserver.utils import AttrDict, SplitQueue, HTTPStatus, DEFAULT_HEADERS
+from cgiserver.utils.exceptions import (
+    HTTPRequestError,
+    InvalidMethod,
+    InvalidHeader,
+)
 
 # pylint: disable = no-member
 
@@ -45,14 +50,16 @@ class HttpRequestParser:
 
         self.queue.append(data)
 
-        # TODO: Supports error and exception handling
         while not self.completed and not self.queue.empty:
-            if not self.__parse_startline_done:
-                self._parse_startline()
-            if not self.__parse_headers_done and self.__parse_startline_done:
-                self._parse_headers()
-            if not self.__parse_content_done and self.__parse_headers_done:
-                self._parse_content()
+            try:
+                if not self.__parse_startline_done:
+                    self._parse_startline()
+                if not self.__parse_headers_done and self.__parse_startline_done:
+                    self._parse_headers()
+                if not self.__parse_content_done and self.__parse_headers_done:
+                    self._parse_content()
+            except Exception as err:
+                raise HTTPRequestError from err
 
         return self.config if self.completed else None
 
@@ -67,8 +74,21 @@ class HttpRequestParser:
             query = [item.split("=") for item in query]
             return AttrDict((item[0], item[1]) for item in query)
 
-        startline = self.queue.pop("\r\n")
+        startline = self.queue.pop("\r\n").strip()
+        if len(startline.split()) != 3:
+            raise HTTPRequestError
         method, url, httpver = startline.split()
+        if method not in (
+            "GET",
+            "HEAD",
+            "POST",
+            "PUT",
+            "DELETE",
+            "TRACE",
+            "CONNECT",
+            "OPTIONS",
+        ):
+            raise InvalidMethod
         patrs = urlparse.urlsplit(url)
         self.config.update(
             {
@@ -86,6 +106,8 @@ class HttpRequestParser:
         while not self.queue.empty:
             headerline = self.queue.pop("\r\n")
             if headerline:
+                if ":" not in headerline:
+                    raise InvalidHeader
                 name, value = headerline.strip().split(": ", 1)
                 self.headers[name] = value
             else:
@@ -154,7 +176,7 @@ class HttpResponseParser:
         Return:
             bytes: bytes ready to be sent.
         """
-        headers = AttrDict() if headers is None else headers
+        headers = DEFAULT_HEADERS if headers is None else headers
         body = body.encode() if isinstance(body, str) else body
 
         if body:
