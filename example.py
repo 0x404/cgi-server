@@ -32,6 +32,12 @@ and convert it to the corresponding type, I think it's not easy and a lot of eff
 """
 import json
 from cgiserver import route, run, crun
+from cgiserver import GLOBAL_SETTING
+
+# set the template for the error page below,
+# you can set a file path, or you can set a string(html page) directly.
+# If you don't set it, the system will automatically complete it for you
+GLOBAL_SETTING.template_404 = "./404.html"
 
 
 @route("/webroot", method="GET")

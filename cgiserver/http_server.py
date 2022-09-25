@@ -4,6 +4,7 @@ from concurrent import futures
 from typing import Any
 from cgiserver.http_session import Session
 from cgiserver.logging import get_logger
+from cgiserver.setting import GLOBAL_SETTING
 
 LOGGER = get_logger()
 
@@ -38,6 +39,9 @@ class HTTPServer:
         # see details: https://stackoverflow.com/questions/34871191/cant-close-socket-on-keyboardinterrupt
         server_socket.settimeout(1)
         LOGGER.info("server running on http://%s:%s", self.host, self.port)
+        GLOBAL_SETTING.check_setting("template_400")
+        GLOBAL_SETTING.check_setting("template_403")
+        GLOBAL_SETTING.check_setting("template_404")
         executor = futures.ThreadPoolExecutor(self.max_connection)
         while not self.should_stop:
             try:

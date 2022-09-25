@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from .router import route
 from .http_server import HTTPServer
 from .logging import init_logger
+from .setting import GLOBAL_SETTING
 
 
 def run(
@@ -23,7 +24,6 @@ def run(
     if log_dir is not None:
         os.environ["CGISERVER_LOGDIR"] = log_dir
     init_logger()
-
     server = HTTPServer(host, port, max_connection)
     server.serve_forever()
 
@@ -40,4 +40,4 @@ def crun():
     run(host=args.host, port=args.port, max_connection=args.maxc, log_dir=args.logdir)
 
 
-__all__ = ["route", "run", "crun"]
+__all__ = ["route", "run", "crun", "GLOBAL_SETTING"]

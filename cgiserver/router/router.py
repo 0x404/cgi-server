@@ -1,7 +1,11 @@
 """Router: mapping URL:method to a callable object"""
 # pylint: disable = wildcard-import
 from typing import Any
-from cgiserver.utils.exceptions import *
+from cgiserver.utils.exceptions import (
+    RouteOverwriteError,
+    InvalidRouteMethod,
+    InvalidRoutePath,
+)
 
 
 class Route:

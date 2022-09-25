@@ -11,3 +11,7 @@ class InvalidRoutePath(Exception):
 
 class InvalidRouteMethod(Exception):
     """Invalid route method"""
+
+
+class RequestForbidden(Exception):
+    """Request forbidden"""
