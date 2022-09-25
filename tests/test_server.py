@@ -6,7 +6,7 @@ from cgiserver.http_server import HTTPServer
 
 def test_server():
 
-    HOST = "0.0.0.0"
+    HOST = "127.0.0.1"
     PORT = 5500
     server = HTTPServer(HOST, PORT)
     server_thread = threading.Thread(target=server.serve_forever)
@@ -51,15 +51,8 @@ def test_server():
         b"Sec-Fetch-Dest: document\r\n"
         b"Accept-Encoding: gzip, deflate, br\r\n"
         b"Accept-Language: en-GB,en;q=0.9,zh;q=0.8,en-US;q=0.7,zh-CN;q=0.6\r\n"
-        b"Content-Length: 617\r\n\r\n"
-        b'<!doctype html>\n<html>\n\n<head>\n    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n'
-        b'    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">\n'
-        b"    <title>Error 404 - Page Not Found!</title>\n"
-        b'    <link rel="stylesheet" type="text/css" href="http://mycgiserver.oss-cn-beijing.aliyuncs.com/css/style.css" />\n'
-        b'</head>\n\n<body>\n    <div class="container">\n'
-        b'        <img class="ops" src="http://mycgiserver.oss-cn-beijing.aliyuncs.com/images/404.svg" />\n'
-        b"        <br />\n        <h3>There may be a problem with the path accessed.</h3>\n        <br />\n"
-        b"    </div>\n</body>\n\n</html>"
+        b"Content-Length: 29\r\n\r\n"
+        b"Nothing matches the given URI"
     )
     http_response = client_socket.recv(4096)
     assert http_response == expected_response

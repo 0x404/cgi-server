@@ -4,10 +4,16 @@
 
 ### 从PYPI安装
 
-执行如下命令即可安装（PyPI上有项目源码，结课前勿外传）
+在线安装（PyPI上有项目源码，该下载方式在结课前暂不可用）
 
 ```shell
 pip install cgi-server
+```
+
+本地安装，从最新的[release](https://github.com/0x404/cgi-server/releases/)中下载`.whl`文件，下载完成后执行如下命令（注意版本命名）
+
+```shell
+pip install cgi_server-1.2.1-py3-none-any.whl
 ```
 
 
@@ -42,7 +48,7 @@ def web_page(**kwargs):
     return response
 
 if __name__ == "__main__":
-	run("127.0.0.1", 8888)
+    run("127.0.0.1", 8888)
 ```
 
 执行如下命令：
