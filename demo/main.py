@@ -123,21 +123,28 @@ def calculate(**args):
 
 @route("/cgi-bin/query.py", method="GET")
 def query_page(**args):
-    return "This should return an HTML page capable of submitting the form"
+    return html_file_loader("static/query.html")
 
 
 @route("/cgi-bin/query.py", method="POST")
 def query(**args):
+    response = {"ok": True, "message": None, "content": None}
     student_id = args.get("id")
     if student_id is None:
-        return "student id should be provided"
+        response["ok"] = False
+        response["message"] = "student id should be provided"
     query_result = db.query_by_id(student_id)
     if query_result:
         query_result = query_result[0]
-        return json.dumps(
+        response["content"] = json.dumps(
             {"id": query_result[0], "name": query_result[1], "calss": query_result[2]}
         )
-    return f"None of the students in the database have the id of {student_id}"
+    else:
+        response["ok"] = False
+        response[
+            "message"
+        ] = f"None of the students in the database have the id of {student_id}"
+    return json.dumps(response)
 
 
 if __name__ == "__main__":

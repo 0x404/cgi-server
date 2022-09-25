@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>query test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+  </script>
+  <script>
+    function getStuInfo() {
+    var stuID = parseInt(document.getElementById("stuID").value);
+    var stu_result = document.getElementById("stu_result");
+    var server_data = [
+    {"id": stuID}
+    ];
+    $.ajax({
+    type: "POST",
+    url: "/cgi-bin/query.py",
+    data: JSON.stringify(server_data),
+    contentType: "application/json",
+    dataType: 'json',
+    success: function(result) {
+      console.log(result)
+      if(result.ok)
+      {
+        var content = JSON.parse(result.content)
+        stu_result.innerHTML = content.name;
+      }
+      else
+      {
+        alert(result.message)
+      }
+    } 
+    });
+    }
+  </script>
+  </head>
+  <body>
+    <div id="calc-container">
+      <h1>Student Query</h1>
+     <label>Enter ID:</label>
+     <input type="number" name="hr" id="stuID">
+     <br><br>
+     </br><br>
+     <input type="submit" name="next" value="Next" onclick="getStuInfo();">
+     <br><br>
+     <div id="qtc-results">
+     <p>success. Get [<span id="stu_result"></span>] from server.</p>
+     </div>
+    </div>
+  </body>
+</html>
