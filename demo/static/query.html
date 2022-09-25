@@ -23,8 +23,7 @@
       console.log(result)
       if(result.ok)
       {
-        var content = JSON.parse(result.content)
-        stu_result.innerHTML = content.name;
+        stu_result.innerHTML = result.content.name;
       }
       else
       {

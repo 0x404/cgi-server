@@ -136,9 +136,11 @@ def query(**args):
     query_result = db.query_by_id(student_id)
     if query_result:
         query_result = query_result[0]
-        response["content"] = json.dumps(
-            {"id": query_result[0], "name": query_result[1], "calss": query_result[2]}
-        )
+        response["content"] = {
+            "id": query_result[0],
+            "name": query_result[1],
+            "calss": query_result[2],
+        }
     else:
         response["ok"] = False
         response[
