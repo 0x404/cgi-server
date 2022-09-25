@@ -1,4 +1,5 @@
 """HTTP Parser"""
+import json
 import urllib.parse as urlparse
 from typing import Optional, Union
 from cgiserver.utils import AttrDict, SplitQueue, HTTPStatus, DEFAULT_HEADERS
@@ -126,6 +127,9 @@ class HttpRequestParser:
             self.config.content += self.queue.data
             self.queue.clear()
         if len(self.config.content) == content_length:
+            if self.config.method == "POST":
+                self.config.content = json.loads(self.config.content)
+                self.config.query_string.update(self.config.content[0])
             self.__parse_content_done = True
 
 
