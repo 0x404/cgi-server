@@ -1,5 +1,5 @@
 body{
-  background-image: url("https://raw.githubusercontent.com/cinye/cgi-resource/main/images/index/%E8%83%8C%E6%99%AF.png");
+  background-image: url("http://mycgiserver.oss-cn-beijing.aliyuncs.com/images/background.png");
   background-size: cover;
 }
 div,
