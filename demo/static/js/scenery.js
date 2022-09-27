@@ -28,12 +28,12 @@
           oUl.style.left = oUl.offsetLeft +iSpeed + "px";
      }
       //点击向左滚动即触发第一个a元素标签
-      oA[0].onclick = function()
+      oA[4].onclick = function()
       {
           iSpeed = -3;
       }
       //点击向右滚动即触发第二个a元素标签
-      oA[1].onclick = function()
+      oA[5].onclick = function()
       {
           iSpeed = 3;
       }
