@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <title>query test</title>
+  <title>query</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="http://mycgiserver.oss-cn-beijing.aliyuncs.com/css/func.css"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
   </script>
   <script>
     function getStuInfo() {
     var stuID = parseInt(document.getElementById("stuID").value);
-    var stu_result = document.getElementById("stu_result");
+    var stu_name = document.getElementById("stu_name");
+    var stu_class = document.getElementById("stu_class");
     var server_data = [
     {"id": stuID}
     ];
@@ -23,29 +25,80 @@
       console.log(result)
       if(result.ok)
       {
-        stu_result.innerHTML = result.content.name;
+        stu_name.innerHTML = result.content.name;
+        stu_class.innerHTML = result.content.class;
       }
       else
       {
         alert(result.message)
       }
-    } 
+    }
     });
     }
   </script>
+<!--  <link rel="stylesheet" href="css/func.css">-->
+
   </head>
+<!--  <body style="background-color:#cceeff;">-->
   <body>
-    <div id="calc-container">
-      <h1>Student Query</h1>
-     <label>Enter ID:</label>
-     <input type="number" name="hr" id="stuID">
-     <br><br>
-     </br><br>
-     <input type="submit" name="next" value="Next" onclick="getStuInfo();">
-     <br><br>
-     <div id="qtc-results">
-     <p>success. Get [<span id="stu_result"></span>] from server.</p>
-     </div>
-    </div>
+      <div class="top_menu" id="menu">
+          <a  href="/">
+              Home
+          </a>
+          <a  href="/cgi-bin/calculator.py">
+              Calculator
+          </a>
+          <a>
+              More...
+          </a>
+      </div>
+      <center>
+          <div id="calc-container" class="func">
+              <br/>
+              <h1>Student Query</h1>
+              <label style="white-space: pre">Enter ID:  </label>
+              <input class="solid_input" name="hr" id="stuID">
+<!--              <input type="number" name="hr" id="stuID">-->
+              <br><br>
+              <input type="submit" class="my_button" name="next" value="OK" onclick="getStuInfo()">
+<!--              <input type="submit" -->
+<!--                     style="height: 30px; width: 100px; background-color:rgb(48,128,20,0.8); border-radius: 15px;"-->
+<!--                     name="next" value="OK" onclick="getStuInfo()">-->
+
+              <br><br>
+              <div id="qtc-results">
+                  <p>The Result from server:<br/></p>
+                  <table border="0" cellspacing="30" cellpadding="30">
+                      <tr>
+                          <td align="right">Name:</td>
+                          <td><span id="stu_name"></span><br/></td>
+                      </tr>
+                      <tr>
+                          <td align="right">Class:</td>
+                          <td><span id="stu_class"></span><br/></td>
+                      </tr>
+                      <tr>
+
+                      </tr>
+                  </table>
+              </div>
+
+              <div class="equalizer">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+              </div>
+          </div>
+
+      </center>
+
   </body>
 </html>

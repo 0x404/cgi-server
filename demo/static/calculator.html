@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>calculator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="http://mycgiserver.oss-cn-beijing.aliyuncs.com/css/func.css"/>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+  </script>
+  <script>
+    function getCalResult() {
+    var cal_var2 = document.getElementById("cal_var2").value;
+    var cal_var1 = document.getElementById("cal_var1").value;
+    var cal_op = document.getElementById("cal_op").value;
+    var cal_result = document.getElementById("cal_result");
+    var server_data = [
+    {"value1": cal_var1,
+    "value2":cal_var2,
+    "op":cal_op}
+    ];
+    $.ajax({
+    type: "POST",
+    url: "/cgi-bin/calculator.py",
+    data: JSON.stringify(server_data),
+    contentType: "application/json",
+    dataType: 'json',
+    success: function(result) {
+      console.log(result)
+      if(result.ok)
+      {
+        cal_result.innerHTML = result.content;
+      }
+      else
+      {
+        alert(result.message)
+      }
+    }
+    });
+    }
+  </script>
+  </head>
+  <body>
+      <div class="top_menu" id="menu">
+          <a  href="/">
+              Home
+          </a>
+          <a  href="/cgi-bin/query.py">
+              Query
+          </a>
+          <a>
+              More...
+          </a>
+      </div>
+      <center>
+          <div id="calc-container" class="func">
+              <h1>Calculator</h1>
+              <label>The first value to be operated:    </label><br>
+              <input type="text" name="cal_var1" id="cal_var1"><br>
+
+              <label>The operator:                              </label><br>
+              <input type="text" name="cal_op" id="cal_op"><br>
+
+              <label>The second value to be operated:</label><br>
+              <input type="text" name="cal_var2" id="cal_var2"><br>
+              <br><br>
+              <input type="submit" name="get_r" value="Get Result" onclick="getCalResult()">
+
+              <br><br>
+              <div id="qtc-results">
+                  <table border="0" cellspacing="30" cellpadding="30">
+                      <tr>
+                          <td align="right">Result:</td>
+                          <td><span id="cal_result"></span><br/></td>
+                      </tr>
+                  </table>
+              </div>
+
+              <div class="equalizer">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+              </div>
+
+
+          </div>
+
+      </center>
+
+  </body>
+</html>

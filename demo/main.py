@@ -4,7 +4,6 @@ from cgiserver import route, run
 from cgiserver import GLOBAL_SETTING
 from cgiserver.utils import html_file_loader
 
-
 GLOBAL_SETTING.template_404 = "./static/404.html"
 # 可以自定义错误代码界面的模板，可以是一个路径也可以是一个字符串
 # GLOBAL_SETTING.template_400 = "./static/400.html"
@@ -45,7 +44,7 @@ class DataBase:
 
     def fill_database(self):
         students = [
-            ("709990845", "Sue", "class6"),
+            ("1120192092", "Zeng", "class5"),
             ("393617759", "Thelma", "class8"),
             ("557948644", "Darrell", "class4"),
             ("1065334204", "Maria", "class10"),
@@ -80,45 +79,49 @@ class DataBase:
 
 
 @route("/", method="GET")
-def hello():
-    return "this is index.html"
+def index_page():
+    return html_file_loader("static/index.html")
 
 
 @route("/log", method="GET")
 def log_page():
     return html_file_loader("logs/server_log.html")
 
-
 @route("/cgi-bin/calculator.py", method="GET")
 def calculate_page(**args):
-    return "This should return an HTML page capable of submitting the form"
-
+    return html_file_loader("static/calculator.html")
 
 @route("/cgi-bin/calculator.py", method="POST")
 def calculate(**args):
     value1 = args.get("value1")
     value2 = args.get("value2")
     op = args.get("op")
-
+    response = {"ok": True, "message": None, "content": None}
     if any(arg is None for arg in (value1, value2, op)):
-        return "argument error"
+        response["ok"] = False
+        response["message"] = "argument error"
+        return json.dumps(response)
 
     try:
         value1 = float(value1)
         value2 = float(value2)
     except Exception:
-        return "value1 or value2 is not a float or integer"
+        response["ok"] = False
+        response["message"] = "value1 or value2 is not a float or integer"
+        return json.dumps(response)
 
     if op == "+":
-        return value1 + value2
-    if op == "-":
-        return value1 - value2
-    if op == "*":
-        return value1 * value2
-    if op == "/":
-        return value1 / value2
-
-    return f"operation {op} not yet supported"
+        response["content"] = value1 + value2
+    elif op == "-":
+        response["content"] = value1 - value2
+    elif op == "*":
+        response["content"] = value1 * value2
+    elif op == "/":
+        response["content"] = value1 / value2
+    else:
+        response["ok"] = False
+        response["message"] = "operator error"
+    return json.dumps(response)
 
 
 @route("/cgi-bin/query.py", method="GET")
@@ -134,12 +137,13 @@ def query(**args):
         response["ok"] = False
         response["message"] = "student id should be provided"
     query_result = db.query_by_id(student_id)
+    # print(student_id, query_result)
     if query_result:
         query_result = query_result[0]
         response["content"] = {
             "id": query_result[0],
             "name": query_result[1],
-            "calss": query_result[2],
+            "class": query_result[2],
         }
     else:
         response["ok"] = False
@@ -147,6 +151,11 @@ def query(**args):
             "message"
         ] = f"None of the students in the database have the id of {student_id}"
     return json.dumps(response)
+
+
+@route("/scenery.html", method="GET")
+def query_page(**args):
+    return html_file_loader("static/scenery.html")
 
 
 if __name__ == "__main__":
