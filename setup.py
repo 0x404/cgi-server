@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cgi-server",
-    version="1.2.3",
+    version="1.2.4",
     author="zengqunhong, xuzheyuan",
     author_email="zengqunhong@gmail.com",
     description="multi thread cgi server using python3",
