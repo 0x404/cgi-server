@@ -78,16 +78,14 @@ pip uninstall cgi-server
 * 静态路由和`CGI`路由
 * 路由装饰器
 * 最大链接数量
+* 解析HTTP的报错处理
+* 错误代码400, 403, 404处理和用户自定义模板
 
 
 
 ## TODO
-
-* 解析HTTP的报错处理(wzx)
-* 解析decorated function(zqh)
-* 实现参数能够通过模板指定(zqh)
-* 完善HTTP返回代码400和403的处理
-* 解析HTTP用正则匹配
+* 解析decorated function
+* 实现参数能够通过模板指定
 * 完善[测试](./tests/)，目前的测试不够完善，尤其是对出错处理
 * 服务器处理请求可以说是一个IO形的行为，有很多时间消耗在（等待）输入/输出上；Python的全局解释锁导致这类程序多线程和单线程区别并不是很大，为了提高系统性能，我们是不是应该用多进程来替代多线程呢？
 * 实现decorated function[返回模板](http://bottlepy.org/docs/dev/tutorial.html#templates)
