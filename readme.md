@@ -4,13 +4,13 @@
 
 ### 从PYPI安装
 
-在线安装（PyPI上有项目源码，该下载方式在结课前暂不可用）
+在线安装
 
 ```shell
 pip install cgi-server
 ```
 
-本地安装，从最新的[release](https://github.com/0x404/cgi-server/releases/)中下载`.whl`文件，下载完成后执行如下命令（注意版本命名）
+本地安装，从最新的[release](https://github.com/0x404/cgi-server/releases/)中下载`.whl`文件，下载完成后执行如下命令（注意版本命名，下面安装的版本是1.2.1）
 
 ```shell
 pip install cgi_server-1.2.1-py3-none-any.whl
@@ -43,7 +43,7 @@ python setup.py install
 from cgiserver import route, run
 
 @route("/helloworld", method="GET")
-def web_page(**kwargs):
+def web_page():
     response = "<h1> Hello World </h1>"
     return response
 
@@ -61,7 +61,9 @@ python hello.py
 
 更详细的使用说明请见[example.py](./example.py)，里面详细介绍了本库的各种功能
 
-## 卸载
+除此之外，可以参考这个[仓库](https://github.com/0x404/computer-network-practice)，在这个仓库中使用本框架构建了一个网页应用程序，支持静态页面，`Ajax`请求等功能
+
+### 卸载
 
 使用如下命令完成卸载
 
