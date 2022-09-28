@@ -4,13 +4,13 @@
 
 ### 从PYPI安装
 
-在线安装（PyPI上有项目源码，该下载方式在结课前暂不可用）
+在线安装
 
 ```shell
 pip install cgi-server
 ```
 
-本地安装，从最新的[release](https://github.com/0x404/cgi-server/releases/)中下载`.whl`文件，下载完成后执行如下命令（注意版本命名）
+本地安装，从最新的[release](https://github.com/0x404/cgi-server/releases/)中下载`.whl`文件，下载完成后执行如下命令（注意版本命名，下面安装的版本是1.2.1）
 
 ```shell
 pip install cgi_server-1.2.1-py3-none-any.whl
@@ -43,7 +43,7 @@ python setup.py install
 from cgiserver import route, run
 
 @route("/helloworld", method="GET")
-def web_page(**kwargs):
+def web_page():
     response = "<h1> Hello World </h1>"
     return response
 
@@ -61,7 +61,9 @@ python hello.py
 
 更详细的使用说明请见[example.py](./example.py)，里面详细介绍了本库的各种功能
 
-## 卸载
+除此之外，可以参考这个[仓库](https://github.com/0x404/computer-network-practice)，在这个仓库中使用本框架构建了一个网页应用程序，支持静态页面，`Ajax`请求等功能
+
+### 卸载
 
 使用如下命令完成卸载
 
@@ -78,16 +80,14 @@ pip uninstall cgi-server
 * 静态路由和`CGI`路由
 * 路由装饰器
 * 最大链接数量
+* 解析HTTP的报错处理
+* 错误代码400, 403, 404处理和用户自定义模板
 
 
 
 ## TODO
-
-* 解析HTTP的报错处理(wzx)
-* 解析decorated function(zqh)
-* 实现参数能够通过模板指定(zqh)
-* 完善HTTP返回代码400和403的处理
-* 解析HTTP用正则匹配
+* 解析decorated function
+* 实现参数能够通过模板指定
 * 完善[测试](./tests/)，目前的测试不够完善，尤其是对出错处理
 * 服务器处理请求可以说是一个IO形的行为，有很多时间消耗在（等待）输入/输出上；Python的全局解释锁导致这类程序多线程和单线程区别并不是很大，为了提高系统性能，我们是不是应该用多进程来替代多线程呢？
 * 实现decorated function[返回模板](http://bottlepy.org/docs/dev/tutorial.html#templates)
