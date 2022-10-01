@@ -86,5 +86,5 @@ pip uninstall cgi-server
 
 ## 参与开发
 
-详细要求请见[CONTTRIBUTING.md](docs/CONTTRIBUTING.md)
+详细要求请见[CONTTRIBUTING.md](docs/CONTRIBUTING.md)
 
