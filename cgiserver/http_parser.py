@@ -51,16 +51,15 @@ class HttpRequestParser:
 
         self.queue.append(data)
 
-        while not self.completed and not self.queue.empty:
-            try:
-                if not self.__parse_startline_done:
-                    self._parse_startline()
-                if not self.__parse_headers_done and self.__parse_startline_done:
-                    self._parse_headers()
-                if not self.__parse_content_done and self.__parse_headers_done:
-                    self._parse_content()
-            except Exception as err:
-                raise HTTPRequestError from err
+        try:
+            if not self.__parse_startline_done:
+                self._parse_startline()
+            if not self.__parse_headers_done and self.__parse_startline_done:
+                self._parse_headers()
+            if not self.__parse_content_done and self.__parse_headers_done:
+                self._parse_content()
+        except Exception as err:
+            raise HTTPRequestError from err
 
         return self.config if self.completed else None
 
@@ -104,8 +103,12 @@ class HttpRequestParser:
 
     def _parse_headers(self) -> None:
         """Parse the headers of the http request"""
+
         while not self.queue.empty:
-            headerline = self.queue.pop("\r\n")
+            headerline = self.queue.pop_str_end_with("\r\n")
+            if headerline is None:
+                break
+
             if headerline:
                 if ":" not in headerline:
                     raise InvalidHeader
