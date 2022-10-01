@@ -1,4 +1,5 @@
 """HTTP Parser"""
+from email import header
 import json
 import urllib.parse as urlparse
 from typing import Optional, Union
@@ -51,16 +52,15 @@ class HttpRequestParser:
 
         self.queue.append(data)
 
-        while not self.completed and not self.queue.empty:
-            try:
-                if not self.__parse_startline_done:
-                    self._parse_startline()
-                if not self.__parse_headers_done and self.__parse_startline_done:
-                    self._parse_headers()
-                if not self.__parse_content_done and self.__parse_headers_done:
-                    self._parse_content()
-            except Exception as err:
-                raise HTTPRequestError from err
+        try:
+            if not self.__parse_startline_done:
+                self._parse_startline()
+            if not self.__parse_headers_done and self.__parse_startline_done:
+                self._parse_headers()
+            if not self.__parse_content_done and self.__parse_headers_done:
+                self._parse_content()
+        except Exception as err:
+            raise HTTPRequestError from err
 
         return self.config if self.completed else None
 
@@ -104,8 +104,47 @@ class HttpRequestParser:
 
     def _parse_headers(self) -> None:
         """Parse the headers of the http request"""
+        def headerline_interrupt_patch(queue: SplitQueue):
+            """
+            
+            AsWeKnow header_line is \r\n(end flag) | ..*\r\n..*(header_content)
+
+            assert queue & next_queue is header_line 
+            // TODO: bound condition would cause error
+            discuss:
+            have known queue, don't know next_queue.
+            if queue.empty == false:
+                assert queue is \r\n | ..*[!\r\n] | ..*\r\n.*
+                exec line = queue.pop(delimiter=\r\n)
+                if queue.empty:
+                    assert queue is \r\n | ..*[!\r\n]
+                    assert line is EMPTY | ..*
+                    if line.empty:
+                        assert line is end_flag.
+                    else:
+                        push ..*
+                else: // queue not empty
+                    assert queue is ..*\r\n.*
+                    assert line is ..*
+                    assert line is header_content.
+
+            """
+            
+            line = queue.pop("\r\n")
+            if line is None: return line
+
+            if queue.empty and len(line) > 0:
+                queue.append(line)
+                return None
+
+            return line
+        
+        
         while not self.queue.empty:
-            headerline = self.queue.pop("\r\n")
+            headerline = headerline_interrupt_patch(self.queue)
+            if headerline is None:
+                break
+
             if headerline:
                 if ":" not in headerline:
                     raise InvalidHeader
