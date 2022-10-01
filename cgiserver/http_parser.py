@@ -1,5 +1,4 @@
 """HTTP Parser"""
-from email import header
 import json
 import urllib.parse as urlparse
 from typing import Optional, Union
