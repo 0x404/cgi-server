@@ -54,3 +54,24 @@ class SplitQueue:
         first, *rest = self._data.split(delimiter, 1)
         self._data = "" if not rest else rest[0]
         return first
+
+    def pop_str_end_with(self, delimiter: Union[str, bytes]) -> Union[str, bytes]:
+        """Pop the first element before the delimiter.
+
+        Args:
+            delimiter (Union[str, bytes]): delimiter to split the string.
+
+        Raises:
+            ValueError: pop if the queue is already empty.
+
+        Returns:
+            Union[str, bytes]: the first element end with the delimiter.
+        """
+        if self.empty:
+            raise ValueError("SplitQueue is empty")
+        first, *rest = self._data.split(delimiter, 1)
+        if len(rest) == 0:
+            return None
+
+        self._data = "" if not rest else rest[0]
+        return first

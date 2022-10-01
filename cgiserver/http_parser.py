@@ -103,45 +103,9 @@ class HttpRequestParser:
 
     def _parse_headers(self) -> None:
         """Parse the headers of the http request"""
-        def headerline_interrupt_patch(queue: SplitQueue):
-            """
-
-            AsWeKnow header_line is \r\n(end flag) | ..*\r\n..*(header_content)
-
-            assert queue & next_queue is header_line
-            // TODO: bound condition would cause error
-            discuss:
-            have known queue, don't know next_queue.
-            if queue.empty == false:
-                assert queue is \r\n | ..*[!\r\n] | ..*\r\n.*
-                exec line = queue.pop(delimiter=\r\n)
-                if queue.empty:
-                    assert queue is \r\n | ..*[!\r\n]
-                    assert line is EMPTY | ..*
-                    if line.empty:
-                        assert line is end_flag.
-                    else:
-                        push ..*
-                else: // queue not empty
-                    assert queue is ..*\r\n.*
-                    assert line is ..*
-                    assert line is header_content.
-
-            """
-
-            line = queue.pop("\r\n")
-            if line is None:
-                return line
-
-            if queue.empty and len(line) > 0:
-                queue.append(line)
-                return None
-
-            return line
-
 
         while not self.queue.empty:
-            headerline = headerline_interrupt_patch(self.queue)
+            headerline = self.queue.pop_str_end_with("\r\n")
             if headerline is None:
                 break
 
