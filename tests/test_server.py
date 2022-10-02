@@ -8,10 +8,12 @@ def test_server():
 
     HOST = "127.0.0.1"
     PORT = 5500
-    server = HTTPServer(HOST, PORT)
+    stop_event = threading.Event()
+    server = HTTPServer(HOST, PORT, stop_event=stop_event)
     server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
-    sleep(3)
+    sleep(1)
 
     client_socket = socket.socket()
     client_socket.connect((HOST, PORT))
@@ -43,12 +45,12 @@ def test_server():
         b"Content-Length: 29\r\n\r\n"
         b"Nothing matches the given URI"
     )
-    client_socket.settimeout(10)
+    client_socket.settimeout(5)
     try:
         http_response = client_socket.recv(4096)
     except socket.timeout:
-        # close gitub action
-        server.should_stop = True
+        client_socket.sendall(http_request)
+        stop_event.set()
         assert False
     assert http_response == expected_response
     server.should_stop = True
