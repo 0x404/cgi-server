@@ -11,6 +11,7 @@ def test_server():
     stop_event = threading.Event()
     server = HTTPServer(HOST, PORT, stop_event=stop_event)
     server_thread = threading.Thread(target=server.serve_forever)
+    server_thread.daemon = True
     server_thread.start()
     sleep(1)
 
