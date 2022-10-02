@@ -37,13 +37,13 @@ def test_server():
     )
     client_socket.sendall(http_request)
     expected_response = (
-        b"HTTP/1.1 404 Not Found\r\n"
+        b"HTTP/1.1 200 OK\r\n"
         b"User-Agent: cgiserver/1.3.0\r\n"
         b"Accept-Encoding: gzip, deflate, br\r\n"
         b"Accept: */*\r\n"
         b"Connection: keep-alive\r\n"
-        b"Content-Length: 29\r\n\r\n"
-        b"Nothing matches the given URI"
+        b"Content-Length: 18\r\n\r\n"
+        b"this is index page"
     )
     client_socket.settimeout(5)
     try:
@@ -51,6 +51,8 @@ def test_server():
     except socket.timeout:
         client_socket.sendall(http_request)
         stop_event.set()
+        server_thread.join()
         assert False
     assert http_response == expected_response
-    server.should_stop = True
+    stop_event.set()
+    # client_socket.sendall(http_request)

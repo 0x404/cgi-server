@@ -1,7 +1,6 @@
 """HTTP Server"""
 import socket
 import threading
-import sys
 from concurrent import futures
 from typing import Any
 from cgiserver.http_session import Session
@@ -49,7 +48,7 @@ class HTTPServer:
         executor = futures.ThreadPoolExecutor(self.max_connection)
         while True:
             if self.stop_event is not None and self.stop_event.is_set():
-                sys.exit(0)
+                break
             try:
                 client_socket, client_address = server_socket.accept()
             except socket.timeout:
