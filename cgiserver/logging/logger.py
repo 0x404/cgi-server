@@ -3,6 +3,12 @@ import os
 import sys
 import logging
 
+COLORED = True
+try:
+    import coloredlogs
+except ImportError:
+    COLORED = False
+
 
 def init_logger():
     """init root logger"""
@@ -15,18 +21,23 @@ def init_logger():
     # set up root logger
     logger = logging.getLogger()
     logger.setLevel(level=logging.INFO)
-
-    general_formatter = logging.Formatter("[%(asctime)s] - [%(levelname)s] %(message)s")
+    if COLORED:
+        log_formatter = coloredlogs.ColoredFormatter(
+            "[%(asctime)s] - [%(levelname)s] %(message)s"
+        )
+    else:
+        log_formatter = logging.Formatter("[%(asctime)s] - [%(levelname)s] %(message)s")
     html_formatter = logging.Formatter(
         "<p>[%(asctime)s] - [%(levelname)s] %(message)s</p>"
     )
+
     html_handler = logging.FileHandler(
         html_log, mode="w+", encoding="utf-8", delay=False
     )
     console_handler = logging.StreamHandler(sys.stdout)
 
     html_handler.setFormatter(html_formatter)
-    console_handler.setFormatter(general_formatter)
+    console_handler.setFormatter(log_formatter)
 
     logger.addHandler(html_handler)
     logger.addHandler(console_handler)
