@@ -53,6 +53,8 @@ def test_server():
         stop_event.set()
         server_thread.join()
         assert False
+    if http_response != expected_response:
+        stop_event.set()
     assert http_response == expected_response
     stop_event.set()
     # client_socket.sendall(http_request)

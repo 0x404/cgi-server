@@ -83,6 +83,9 @@ def test_functionality():
         client_socket.sendall(request1)
         print("test_functionality: test case1 error")
         assert False
+    if response1 != http_response:
+        stop_event.set()
+        print("test_functionality: test case1 error")
     assert response1 == http_response
 
     request2 = (
@@ -114,6 +117,9 @@ def test_functionality():
         client_socket.sendall(request2)
         print("test_functionality: test case2 error")
         assert False
+    if response2 != http_response:
+        stop_event.set()
+        print("test_functionality: test case2 error")
     assert response2 == http_response
 
     request3 = (
@@ -145,6 +151,9 @@ def test_functionality():
         client_socket.sendall(request3)
         print("test_functionality: test case3 error")
         assert False
+    if response3 != http_response:
+        stop_event.set()
+        print("test_functionality: test case3 error")
     assert response3 == http_response
 
     request4 = (
@@ -176,5 +185,7 @@ def test_functionality():
         client_socket.sendall(request4)
         print("test_functionality: test case4 error")
         assert False
+    if response4 != http_response:
+        stop_event.set()
+        print("test_functionality: test case4 error")
     assert response4 == http_response
-    stop_event.set()
