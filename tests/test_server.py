@@ -35,7 +35,7 @@ def test_server():
         b"Accept-Encoding: gzip, deflate, br\r\n"
         b"Accept-Language: en-GB,en;q=0.9,zh;q=0.8,en-US;q=0.7,zh-CN;q=0.6\r\n\r\n"
     )
-    # client_socket.sendall(http_request)
+    client_socket.sendall(http_request)
     expected_response = (
         b"HTTP/1.1 404 Not Found\r\n"
         b"User-Agent: cgiserver/1.3.0\r\n"
