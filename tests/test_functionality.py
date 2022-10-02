@@ -189,3 +189,4 @@ def test_functionality():
         stop_event.set()
         print("test_functionality: test case4 error")
     assert response4 == http_response
+    stop_event.set()
