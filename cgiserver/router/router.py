@@ -38,8 +38,8 @@ class TreeNode:
         """Claen up a `TreeNode` recursively"""
         for _, child_node in self.sub_nodes.items():
             child_node.cleanup()
-        del self.sub_nodes
-        del self.method2route
+        self.sub_nodes.clear()
+        self.method2route.clear()
 
     def has_route(self, method: str) -> bool:
         """Whether there is a route bound with `method`.
@@ -154,7 +154,26 @@ class Router:
         except RouteOverwriteError:
             print("disable rewriting of existing routes")
 
-    def match(self, path: str, method: str):
+    def match_node(self, path: str):
+        """search for a tree node mathed with `path`.
+
+        Args:
+            path (str): URL path.
+
+        Raises:
+            InvalidRoutePath: URL path is invalid.
+
+        Returns:
+            TreeNode: TreeNode bound to `path`
+        """
+        current_node = self.root
+        for token in self._itertokens(path):
+            if not current_node.has_child(token):
+                raise InvalidRoutePath
+            current_node = current_node.get_child(token)
+        return current_node
+
+    def match_callback(self, path: str, method: str):
         """match a (URL, method) pair.
 
         Args:
@@ -168,16 +187,13 @@ class Router:
         Returns:
             Route: matched route object.
         """
-        # self._debug(self.root)
-        current_node = self.root
-        for token in self._itertokens(path):
-            if not current_node.has_child(token):
-                raise InvalidRoutePath
-            current_node = current_node.get_child(token)
-
-        if not current_node.has_route(method):
+        try:
+            tree_node = self.match_node(path)
+        except InvalidRoutePath as err:
+            raise InvalidRoutePath from err
+        if not tree_node.has_route(method):
             raise InvalidRouteMethod
-        return current_node.get_route(method)
+        return tree_node.get_route(method)
 
     def _debug(self, node: TreeNode):
         """just for debug"""

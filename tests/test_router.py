@@ -25,12 +25,17 @@ def test_router():
         "/webroot/a/c", method="GET", route=Route("/webroot/a/c", "GET", callback4)
     )
 
-    assert router.match("/webroot", "GET").callback is callback1
-    assert router.match("/webroot/a", "POST").callback is callback2
-    assert router.match("/webroot/b", "HEAD").callback is callback3
-    assert router.match("/webroot/a/c", "GET").callback is callback4
+    assert router.match_callback("/webroot", "GET").callback is callback1
+    assert router.match_callback("/webroot/a", "POST").callback is callback2
+    assert router.match_callback("/webroot/b", "HEAD").callback is callback3
+    assert router.match_callback("/webroot/a/c", "GET").callback is callback4
 
     with pytest.raises(InvalidRoutePath):
-        router.match("/webroot/d", "GET")
+        router.match_callback("/webroot/d", "GET")
     with pytest.raises(InvalidRouteMethod):
-        router.match("/webroot/a/c", "POST")
+        router.match_callback("/webroot/a/c", "POST")
+
+    # test clean up
+    router.match_node("/webroot/a").cleanup()
+    with pytest.raises(InvalidRoutePath):
+        router.match_callback("/webroot/c", "POST")

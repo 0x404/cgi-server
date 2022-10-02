@@ -66,7 +66,7 @@ class Session:
         """
         try:
             status_code = 200
-            response_html = GLOBALROUTER.match(config.url, config.method)(
+            response_html = GLOBALROUTER.match_callback(config.url, config.method)(
                 **config.query_string
             )
             if not isinstance(response_html, (str, bytes)) and hasattr(
