@@ -1,5 +1,6 @@
 """HTTP Server"""
 import socket
+import threading
 from concurrent import futures
 from typing import Any
 from cgiserver.http_session import Session
@@ -17,15 +18,17 @@ class HTTPServer:
     >>> server.serve_forever()
     """
 
-    def __init__(self, host: str, port: int, max_connection: int = 20) -> None:
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        max_connection: int = 20,
+        stop_event: threading.Event = None,
+    ) -> None:
         self.host = host
         self.port = port
         self.max_connection = max_connection
-        self.should_stop = False
-
-    def close(self) -> None:
-        """close the server"""
-        self.should_stop = True
+        self.stop_event = stop_event
 
     def serve_forever(self) -> None:
         """Start the server, and whenever a new connection comes,
@@ -43,7 +46,9 @@ class HTTPServer:
         GLOBAL_SETTING.check_setting("template_403")
         GLOBAL_SETTING.check_setting("template_404")
         executor = futures.ThreadPoolExecutor(self.max_connection)
-        while not self.should_stop:
+        while True:
+            if self.stop_event is not None and self.stop_event.is_set():
+                break
             try:
                 client_socket, client_address = server_socket.accept()
             except socket.timeout:
