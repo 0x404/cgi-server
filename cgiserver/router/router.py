@@ -34,6 +34,13 @@ class TreeNode:
         if route is not None:
             self.add_route(route.method, route)
 
+    def cleanup(self):
+        """Claen up a `TreeNode` recursively"""
+        for _, child_node in self.sub_nodes.items():
+            child_node.cleanup()
+        del self.sub_nodes
+        del self.method2route
+
     def has_route(self, method: str) -> bool:
         """Whether there is a route bound with `method`.
 
@@ -124,6 +131,10 @@ class Router:
         tokens = path.split("/")
         for token in tokens:
             yield token
+
+    def cleanup(self):
+        """Claen up router"""
+        self.root.cleanup()
 
     def add(self, path: str, method: str, route: Route):
         """Add a route to this Router.
