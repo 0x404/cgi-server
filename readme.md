@@ -4,7 +4,7 @@
 
 ### 从PYPI安装
 
-在线安装
+使用`pip`安装，需要python版本*>=3.9*
 
 ```shell
 pip install cgi-server
@@ -14,7 +14,7 @@ pip install cgi-server
 
 ### 从源码安装
 
-下载源码，可以从最新的[release](https://github.com/0x404/cgi-server/releases/)下载代码，也可以通过git下载
+下载源码，需要python版本*>=3.9*，可以从最新的[release](https://github.com/0x404/cgi-server/releases/)下载代码，也可以通过git下载
 
 ```shell
 git clone git@github.com:0x404/cgi-server.git
@@ -26,7 +26,7 @@ git clone git@github.com:0x404/cgi-server.git
 python setup.py install
 ```
 
-安装成功后，即可作为一个普通的Python库使用
+安装成功后，即可作为一个Python库使用
 
 ### 使用
 
