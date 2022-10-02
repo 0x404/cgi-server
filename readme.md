@@ -10,11 +10,6 @@
 pip install cgi-server
 ```
 
-本地安装，从最新的[release](https://github.com/0x404/cgi-server/releases/)中下载`.whl`文件，下载完成后执行如下命令（注意版本命名，下面安装的版本是1.2.1）
-
-```shell
-pip install cgi_server-1.2.1-py3-none-any.whl
-```
 
 
 ### 从源码安装
