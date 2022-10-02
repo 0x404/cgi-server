@@ -43,6 +43,12 @@ def test_server():
         b"Content-Length: 29\r\n\r\n"
         b"Nothing matches the given URI"
     )
-    http_response = client_socket.recv(4096)
+    client_socket.settimeout(10)
+    try:
+        http_response = client_socket.recv(4096)
+    except socket.timeout:
+        # close gitub action
+        server.should_stop = True
+        assert False
     assert http_response == expected_response
     server.should_stop = True
