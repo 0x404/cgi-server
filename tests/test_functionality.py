@@ -27,6 +27,7 @@ def setup_server():
     yield server
     stop_event.set()
     server_thread.join()
+    sleep(2)
 
 
 @pytest.fixture
