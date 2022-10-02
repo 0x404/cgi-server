@@ -56,7 +56,7 @@ class HTTPServer:
             except KeyboardInterrupt:
                 break
             executor.submit(Session(client_socket, client_address))
-        executor.shutdown(wait=True)
+        executor.shutdown(wait=False)
         LOGGER.info("server has been shutdown!")
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
