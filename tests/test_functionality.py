@@ -1,13 +1,15 @@
 import threading
 import socket
 import pytest
+import heapq
 from time import sleep
 from cgiserver import route
 from cgiserver.http_server import HTTPServer
 from cgiserver.router import GLOBALROUTER
 
 HOST = "127.0.0.1"
-PORT = 6000
+PORTS = [i for i in range(6000, 7000)]
+heapq.heapify(PORTS)
 
 
 @pytest.fixture
@@ -20,14 +22,14 @@ def setup_nofound():
 @pytest.fixture
 def setup_server():
     stop_event = threading.Event()
-    server = HTTPServer(HOST, PORT, stop_event=stop_event)
+    port = heapq.heappop(PORTS)
+    server = HTTPServer(HOST, port, stop_event=stop_event)
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.start()
     sleep(1)
-    yield server
+    yield port
     stop_event.set()
     server_thread.join()
-    sleep(5)
 
 
 @pytest.fixture
@@ -88,7 +90,7 @@ def setup_calculate():
 
 def test_nofound(setup_nofound, setup_server):
     client_socket = socket.socket()
-    client_socket.connect((HOST, PORT))
+    client_socket.connect((HOST, setup_server))
     http_request = (
         b"GET / HTTP/1.1\r\n"
         b"Host: 0.0.0.0:5500\r\n"
@@ -127,7 +129,7 @@ def test_nofound(setup_nofound, setup_server):
 
 def test_root(setup_root, setup_server):
     client_socket = socket.socket()
-    client_socket.connect((HOST, PORT))
+    client_socket.connect((HOST, setup_server))
 
     request = (
         b"GET / HTTP/1.1\r\n"
@@ -175,7 +177,7 @@ def test_echo(setup_echo, setup_server):
     )
 
     client_socket = socket.socket()
-    client_socket.connect((HOST, PORT))
+    client_socket.connect((HOST, setup_server))
     client_socket.sendall(request)
     client_socket.settimeout(5)
     try:
@@ -205,7 +207,7 @@ def test_calculate(setup_calculate, setup_server):
     )
 
     client_socket = socket.socket()
-    client_socket.connect((HOST, PORT))
+    client_socket.connect((HOST, setup_server))
     client_socket.sendall(request)
     client_socket.settimeout(5)
     try:
@@ -233,7 +235,7 @@ def test_calculate(setup_calculate, setup_server):
     )
 
     client_socket = socket.socket()
-    client_socket.connect((HOST, PORT))
+    client_socket.connect((HOST, setup_server))
     client_socket.sendall(request)
     client_socket.settimeout(5)
     try:
